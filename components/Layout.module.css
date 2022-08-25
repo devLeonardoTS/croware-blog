@@ -1,0 +1,4 @@
+.container {
+	@apply max-w-screen-xl min-h-screen;
+	@apply flex flex-col m-auto gap-y-6;
+}

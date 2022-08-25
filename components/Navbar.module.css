@@ -1,0 +1,34 @@
+.container {
+	@apply mx-6 py-2 flex justify-between;
+}
+
+.logoLink {
+	min-height: 40px;
+
+	@apply flex items-center;
+}
+
+.linkList {
+	@apply hidden gap-5 items-center transition-all;
+	@apply sm:flex;
+}
+
+.linkList a {
+	@apply hover:font-bold;
+}
+
+.menuContainer {
+	@apply flex gap-5 items-center;
+	@apply sm:hidden;
+}
+
+.menuContainer > p {
+	@apply font-bold;
+}
+
+.menuContainer > .menuBtn > svg {
+	width: 30px;
+	height: 30px;
+
+	@apply hover:scale-110 transition-all;
+}
