@@ -9,13 +9,15 @@
 	padding: 0;
 	text-decoration: none;
 	font-family: "Inter", sans-serif;
-	color: black;
+	color: #f2f4f4;
 	box-sizing: border-box;
 }
 
 html,
 body {
 	min-height: 100%;
+	background-image: url("https://res.cloudinary.com/devlts/image/upload/v1661554823/black_scales_mjj4j7.webp");
+	background-repeat: repeat;
 }
 
 ol,

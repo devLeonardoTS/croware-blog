@@ -12,5 +12,5 @@ module.exports = {
 			xl: "1440px",
 		},
 	},
-	plugins: [require("flowbite/plugin")],
+	plugins: [require("flowbite/plugin"), require("@tailwindcss/line-clamp")],
 };

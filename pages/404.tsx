@@ -14,7 +14,7 @@ const NotFound: NextPage = () => {
 		}, 5000);
 
 		return () => clearTimeout(timerId);
-	}, []);
+	}, [router]);
 
 	return (
 		<div className={dftStyles.container}>

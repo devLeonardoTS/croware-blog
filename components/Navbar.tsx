@@ -5,6 +5,7 @@ import { BiMenu } from "react-icons/bi";
 import { OptStyles } from "../@types/styling-types";
 import { StyleHandler } from "../helpers/styling-utils";
 import Link from "next/link";
+import Image from "next/image";
 // import useWindowSize from "../hooks/useWindowSize";
 // import useBreakpoints from "../hooks/useBreakpoints";
 
@@ -33,8 +34,12 @@ export default function Navbar({ optStyles }: NavbarProps) {
 	return (
 		<nav className={styles.container || undefined}>
 			<Link href={"/"} className={styles.logoLink || undefined}>
-				<a>
-					<img src="" alt="Logo" />
+				<a className={styles.logoImg}>
+					<img
+						src="https://res.cloudinary.com/devlts/image/upload/v1661556815/Croware-Type-Logo_ounepa.svg"
+						width={100}
+						height={"100%"}
+					/>
 				</a>
 			</Link>
 			<NavLinks

@@ -1,4 +1,4 @@
 .container {
-	@apply max-w-screen-xl min-h-screen;
+	@apply max-w-screen-xl min-h-screen overflow-hidden;
 	@apply flex flex-col m-auto gap-y-6;
 }

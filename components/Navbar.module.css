@@ -8,6 +8,15 @@
 	@apply flex items-center;
 }
 
+.logoImg {
+}
+
+.logoImg span {
+}
+
+.logoImg img {
+}
+
 .linkList {
 	@apply hidden gap-5 items-center transition-all;
 	@apply sm:flex;

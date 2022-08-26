@@ -3,7 +3,7 @@
 }
 
 .content {
-	@apply grow mx-6 text-center;
+	@apply grow mx-6;
 }
 
 .carouselContainer {

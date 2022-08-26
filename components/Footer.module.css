@@ -6,6 +6,14 @@
 	@apply mx-6 py-2;
 }
 
+.content * {
+	@apply text-white font-bold !important;
+}
+
+.content a * {
+	@apply hover:text-red-400 !important;
+}
+
 .back {
 	position: absolute;
 	z-index: -1;
