@@ -9,12 +9,11 @@
 }
 
 .logoImg {
+	@apply relative;
 }
 
 .logoImg span {
-}
-
-.logoImg img {
+	@apply h-7 !important;
 }
 
 .linkList {
@@ -23,7 +22,7 @@
 }
 
 .linkList a {
-	@apply hover:font-bold;
+	@apply hover:text-red-400;
 }
 
 .menuContainer {

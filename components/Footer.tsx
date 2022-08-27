@@ -14,14 +14,7 @@ export default function Footer() {
 					© 2022 -{" "}
 					<Link href="https://github.com/croware-tech">
 						<a>
-							<small
-								style={{
-									color: "blue",
-									fontWeight: "bold",
-								}}
-							>
-								Croware-tech
-							</small>
+							<small>Croware-tech</small>
 						</a>
 					</Link>
 					.

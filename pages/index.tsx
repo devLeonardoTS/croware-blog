@@ -32,7 +32,7 @@ const tempArticles = (articles: any) => {
 	}
 
 	const articleItems = articles.map((article: any, index: number) => {
-		return <ArticleListItem article={article} />;
+		return <ArticleListItem key={article.attributes.slug} article={article} />;
 	});
 
 	return articleItems;
@@ -53,7 +53,7 @@ const Home: NextPage<HomeProps> = ({ articles }) => {
 				</div>
 				<div id="articles-container">
 					<ul id="articles-list" className="flex flex-col gap-4 py-4">
-						{tempArticles(articles.data)}
+						{tempArticles(articlesList)}
 					</ul>
 				</div>
 			</section>

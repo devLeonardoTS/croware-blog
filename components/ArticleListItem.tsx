@@ -28,6 +28,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 						width={picture.data.attributes.width}
 						height={picture.data.attributes.height}
 						className={dftStyles.image}
+						alt="An image representing the article context."
 					/>
 				</div>
 				<div className={dftStyles.previewContainer}>

@@ -35,10 +35,11 @@ export default function Navbar({ optStyles }: NavbarProps) {
 		<nav className={styles.container || undefined}>
 			<Link href={"/"} className={styles.logoLink || undefined}>
 				<a className={styles.logoImg}>
-					<img
+					<Image
 						src="https://res.cloudinary.com/devlts/image/upload/v1661556815/Croware-Type-Logo_ounepa.svg"
-						width={100}
-						height={"100%"}
+						width={"100%"}
+						height={28}
+						alt="Croware's Logo"
 					/>
 				</a>
 			</Link>
