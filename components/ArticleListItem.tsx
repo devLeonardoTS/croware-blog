@@ -57,54 +57,50 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 	// );
 
 	return (
-		<li key={slug + "-" + article?.id}>
-			<div className={dftStyles.container}>
-				<div className={dftStyles.imgContainer}>
-					<Image
-						src={
-							picture.data?.attributes.url ||
-							"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
-						}
-						width={picture.data?.attributes.width || "100%"}
-						height={picture.data?.attributes.height || "100%"}
-						className={dftStyles.image}
-						alt="An image representing the article context."
-					/>
-					{winBp.isBase && hashTagList()}
+		<div className={dftStyles.container}>
+			<div className={dftStyles.imgContainer}>
+				<Image
+					src={
+						picture.data?.attributes.url ||
+						"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
+					}
+					width={picture.data?.attributes.width || "100%"}
+					height={picture.data?.attributes.height || "100%"}
+					className={dftStyles.image}
+					alt="An image representing the article context."
+				/>
+				{winBp.isBase && hashTagList()}
+			</div>
+			<div className={dftStyles.previewContainer}>
+				<div className={dftStyles.previewHead}>
+					<h2>{article?.attributes?.title || "Sem título..."}</h2>
 				</div>
-				<div className={dftStyles.previewContainer}>
-					<div className={dftStyles.previewHead}>
-						<h2>{article?.attributes?.title || "Sem título..."}</h2>
-					</div>
-					<div className={dftStyles.previewContent}>
-						<p>{article?.attributes?.content?.excerpt || "Sem resumo..."}</p>
-					</div>
-					<div className={dftStyles.previewFooter}>
-						<div className={dftStyles.infoContainer}>
-							<div className={dftStyles.author}>
-								<div className={dftStyles.icon}>
-									<FaFeatherAlt />
-								</div>
-								<p>
-									{authors?.data?.[0]?.attributes?.display_name || "Unknown"}
-								</p>
+				<div className={dftStyles.previewContent}>
+					<p>{article?.attributes?.content?.excerpt || "Sem resumo..."}</p>
+				</div>
+				<div className={dftStyles.previewFooter}>
+					<div className={dftStyles.infoContainer}>
+						<div className={dftStyles.author}>
+							<div className={dftStyles.icon}>
+								<FaFeatherAlt />
 							</div>
-							<div className={dftStyles.time}>
-								<div className={dftStyles.icon}>
-									<BsClockFill />
-								</div>
-								<p>
-									{dayjs(article?.attributes?.publishedAt || Date.now()).format(
-										"DD/MM/YYYY HH:mm"
-									)}
-								</p>
-							</div>
+							<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
 						</div>
-						{!winBp.isBase && !winBp.isSm && hashTagList()}
+						<div className={dftStyles.time}>
+							<div className={dftStyles.icon}>
+								<BsClockFill />
+							</div>
+							<p>
+								{dayjs(article?.attributes?.publishedAt || Date.now()).format(
+									"DD/MM/YYYY HH:mm"
+								)}
+							</p>
+						</div>
 					</div>
+					{!winBp.isBase && !winBp.isSm && hashTagList()}
 				</div>
 			</div>
-		</li>
+		</div>
 	);
 };
 

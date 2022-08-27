@@ -1,5 +1,6 @@
 .container {
 	@apply relative bg-clr-primary;
+	@apply sm:bg-transparent;
 }
 
 .content {

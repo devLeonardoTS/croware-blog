@@ -29,7 +29,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const tempArticles = (articles: any) => {
 	if (!articles || articles?.length < 1) {
-		return <li>No articles available...</li>;
+		return <li key="no-article-0">No articles available...</li>;
 	}
 
 	const articleItems = articles.map((article: any, index: number) => {
@@ -37,10 +37,10 @@ const tempArticles = (articles: any) => {
 		const isLastItem = index === lastIndex;
 
 		return (
-			<>
-				<ArticleListItem key={article.attributes.slug} article={article} />
+			<li key={article.attributes.slug + " " + article.id}>
+				<ArticleListItem article={article} />
 				{!isLastItem && <hr className={dftStyles.divider} />}
-			</>
+			</li>
 		);
 	});
 
