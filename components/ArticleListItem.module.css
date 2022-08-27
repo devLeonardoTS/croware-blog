@@ -7,7 +7,7 @@
 
 .container {
 	@apply flex flex-col max-h-96 min-w-full gap-2 border px-3 border-none rounded;
-	@apply sm:flex-row sm:h-48 sm:gap-3 sm:py-3 sm:overflow-hidden sm:bg-white sm:bg-opacity-5;
+	@apply sm:flex-row sm:h-52 sm:gap-3 sm:py-3 sm:overflow-hidden sm:bg-white sm:bg-opacity-5;
 }
 
 .imgContainer {
@@ -47,11 +47,11 @@
 	@apply absolute min-w-full bottom-0 gap-1 p-2 justify-center items-center;
 	@apply sm:grow sm:justify-end sm:static sm:min-w-0 sm:line-clamp-1 sm:p-0;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(50px, auto));
+	grid-template-columns: repeat(auto-fit, minmax(40px, auto));
 }
 
 .tagsContainer li {
-	@apply px-2 py-1 bg-gray-50 border border-none rounded bg-opacity-80;
+	@apply px-2 py-1 bg-gray-50 border border-none rounded bg-opacity-80 max-w-[70px];
 }
 .tagsContainer li * {
 	@apply text-black break-all line-clamp-1;
@@ -63,7 +63,7 @@
 }
 
 .infoContainer {
-	@apply flex grow gap-2;
+	@apply flex gap-2;
 	@apply md:w-1/2;
 }
 

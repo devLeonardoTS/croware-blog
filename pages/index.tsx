@@ -1,6 +1,6 @@
 import type { GetStaticProps, NextPage } from "next";
 import Image from "next/image";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import Carousel from "../components/Carousel";
 import { MAIN_API_BASEURL } from "../helpers/constants/getEnvironment";
@@ -37,10 +37,12 @@ const tempArticles = (articles: any) => {
 		const isLastItem = index === lastIndex;
 
 		return (
-			<li key={article.attributes.slug + " " + article.id}>
-				<ArticleListItem article={article} />
+			<Fragment key={article.attributes.slug + " " + article.id}>
+				<li>
+					<ArticleListItem article={article} />
+				</li>
 				{!isLastItem && <hr className={dftStyles.divider} />}
-			</li>
+			</Fragment>
 		);
 	});
 
