@@ -91,9 +91,9 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 								<BsClockFill />
 							</div>
 							<p>
-								{dayjs(article?.attributes?.publishedAt || Date.now()).format(
-									"DD/MM/YYYY HH:mm"
-								)}
+								{dayjs(
+									article?.attributes?.publishedAt || "00/00/0000 00:00"
+								).format("DD/MM/YYYY HH:mm")}
 							</p>
 						</div>
 					</div>
