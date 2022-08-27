@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import Carousel from "../components/Carousel";
+import { MAIN_API_BASEURL } from "../helpers/constants/getEnvironment";
 import dftStyles from "../styles/Home.module.css";
 
 type HomeProps = {
@@ -10,7 +11,7 @@ type HomeProps = {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-	const url = "http://localhost:1337/api/articles?populate=*";
+	const url = `${MAIN_API_BASEURL}api/articles?populate=*`;
 
 	try {
 		const res = await fetch(url);
@@ -27,12 +28,20 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const tempArticles = (articles: any) => {
-	if (!articles) {
+	if (!articles || articles?.length < 1) {
 		return <li>No articles available...</li>;
 	}
 
 	const articleItems = articles.map((article: any, index: number) => {
-		return <ArticleListItem key={article.attributes.slug} article={article} />;
+		const lastIndex = articles.length > 0 ? articles.length - 1 : 0;
+		const isLastItem = index === lastIndex;
+
+		return (
+			<>
+				<ArticleListItem key={article.attributes.slug} article={article} />
+				{!isLastItem && <hr className={dftStyles.divider} />}
+			</>
+		);
 	});
 
 	return articleItems;
@@ -46,19 +55,19 @@ const Home: NextPage<HomeProps> = ({ articles }) => {
 
 	return (
 		<main className={dftStyles.container}>
-			<section className={dftStyles.content}>
-				<div id="articles-header">
-					<h1>Publicações</h1>
-					<hr />
-				</div>
-				<div id="articles-container">
-					<ul id="articles-list" className="flex flex-col gap-4 py-4">
+			<div className={dftStyles.contentContainer}>
+				<section className={dftStyles.articlesContainer}>
+					<div className={dftStyles.articlesHeader}>
+						<h2>ÚLTIMAS POSTAGENS</h2>
+					</div>
+
+					<hr className={dftStyles.divider} />
+
+					<ul className={dftStyles.articlesList}>
 						{tempArticles(articlesList)}
 					</ul>
-				</div>
-			</section>
-			<br />
-
+				</section>
+			</div>
 			{/* <section className={dftStyles.carouselContainer}>
 				<Carousel />
 				<p className="text-center">

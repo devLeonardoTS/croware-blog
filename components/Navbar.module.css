@@ -22,7 +22,7 @@
 }
 
 .linkList a {
-	@apply hover:text-red-400;
+	@apply hover:text-clr-accent;
 }
 
 .menuContainer {

@@ -1,10 +1,23 @@
+@tailwind components;
+@layer components {
+	.shadow-compact {
+		box-shadow: 0 0 1em rgba(255, 255, 255, 0.1);
+	}
+}
+
 .container {
-	@apply flex h-48 w-full overflow-hidden gap-3 p-3 bg-white bg-opacity-5 border border-none rounded;
+	@apply flex flex-col max-h-96 min-w-full gap-2 border px-3 border-none rounded;
+	@apply sm:flex-row sm:h-48 sm:gap-3 sm:py-3 sm:overflow-hidden sm:bg-white sm:bg-opacity-5;
+}
+
+.imgContainer {
+	@apply flex flex-col relative;
+	@apply sm:block sm:static sm:min-w-[30%] sm:max-w-[30%];
 }
 
 .imgContainer > span {
-	@apply h-full aspect-video border border-none rounded !important;
-	box-shadow: 0 0 1em rgba(255, 255, 255, 0.1);
+	@apply max-h-36 border border-none rounded !important;
+	@apply sm:h-full sm:min-w-full sm:max-h-fit sm:aspect-auto sm:shadow-compact !important;
 }
 
 .imgContainer img {
@@ -12,42 +25,63 @@
 }
 
 .previewContainer {
-	@apply flex flex-col gap-2;
+	@apply grow flex flex-col gap-2;
 }
 
 .previewHead {
-	@apply line-clamp-1 break-all w-full;
+	@apply line-clamp-2;
+	@apply line-clamp-1;
 }
 
 .previewContent {
-	@apply grow line-clamp-3 break-all w-full;
+	@apply line-clamp-3;
+	@apply sm:line-clamp-4;
 }
 
 .previewFooter {
-	@apply flex min-h-fit gap-2;
+	@apply flex flex-col mt-auto pt-4;
+	@apply sm:flex-row sm:h-min sm:pt-0;
 }
 
 .tagsContainer {
-	@apply hidden flex-wrap gap-2 ml-auto items-center md:flex;
+	@apply absolute min-w-full bottom-0 gap-1 p-2 justify-center items-center;
+	@apply sm:grow sm:justify-end sm:static sm:min-w-0 sm:line-clamp-1 sm:p-0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(50px, auto));
 }
 
 .tagsContainer li {
-	@apply flex items-center px-2 py-1 h-fit bg-gray-50 border border-none rounded;
+	@apply px-2 py-1 bg-gray-50 border border-none rounded bg-opacity-80;
 }
 .tagsContainer li * {
-	@apply text-black;
+	@apply text-black break-all line-clamp-1;
 }
 
 .tagsContainer li small {
 	@apply font-bold;
+	font-size: xx-small;
 }
 
 .infoContainer {
-	@apply flex gap-4;
+	@apply flex grow gap-2;
+	@apply md:w-1/2;
+}
+
+.infoContainer p {
+	@apply overflow-hidden text-ellipsis line-clamp-2;
+}
+
+.infoContainer .icon {
+	@apply flex;
 }
 
 .infoContainer .author {
 	@apply flex items-center gap-2;
+}
+
+.infoContainer .author::after {
+	content: "";
+	@apply border-r-2 border-white h-full;
 }
 
 .infoContainer .time {

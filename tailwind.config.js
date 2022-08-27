@@ -11,6 +11,11 @@ module.exports = {
 			lg: "1024px",
 			xl: "1440px",
 		},
+		colors: {
+			"clr-primary": "#221f1f",
+			"clr-secondary": "#f2f4f4",
+			"clr-accent": "#ef4444",
+		},
 	},
 	plugins: [require("flowbite/plugin"), require("@tailwindcss/line-clamp")],
 };
