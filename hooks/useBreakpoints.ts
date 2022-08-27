@@ -44,6 +44,9 @@ export default function useBreakpoints() {
 
         function handleBreakpoints(width: number | undefined) {
 
+            // console.log(width);
+            // console.log(breakpoints);
+
             if (typeof (width) === "undefined") {
                 setBreakpoints(initialState);
                 return;

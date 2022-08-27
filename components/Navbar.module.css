@@ -8,13 +8,21 @@
 	@apply flex items-center;
 }
 
+.logoImg {
+	@apply relative;
+}
+
+.logoImg span {
+	@apply h-7 !important;
+}
+
 .linkList {
 	@apply hidden gap-5 items-center transition-all;
 	@apply sm:flex;
 }
 
 .linkList a {
-	@apply hover:font-bold;
+	@apply hover:text-clr-accent;
 }
 
 .menuContainer {
