@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dftStyles from "./ArticleListItem.module.css";
 import Image from "next/image";
 import { BsClockFill } from "react-icons/bs";
@@ -11,6 +11,17 @@ interface ArticleListItem {
 }
 
 const ArticleListItem = ({ article }: ArticleListItem) => {
+	const [publishedAt, setPublishedAt] = useState("00/00/0000 00:00");
+
+	useEffect(() => {
+		if (article?.attributes?.publishedAt) {
+			const formattedDate = dayjs(article.attributes.publishedAt).format(
+				"DD/MM/YYYY HH:mm"
+			);
+			setPublishedAt(formattedDate);
+		}
+	}, [article]);
+
 	const winBp = useBreakpoints();
 
 	const {
@@ -91,7 +102,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 								<BsClockFill />
 							</div>
 							<p>
-								{article?.attributes?.publishedAt}
+								{publishedAt}
 								{/* {dayjs(
 									article?.attributes?.publishedAt || "00/00/0000 00:00"
 								).format("DD/MM/YYYY HH:mm")} */}
