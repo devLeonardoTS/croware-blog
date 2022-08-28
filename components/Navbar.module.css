@@ -9,7 +9,7 @@
 }
 
 .logoImg {
-	@apply relative;
+	@apply flex shrink-0 relative;
 }
 
 .logoImg span {

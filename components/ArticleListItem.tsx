@@ -75,8 +75,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 						picture.data?.attributes.url ||
 						"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
 					}
-					width={picture.data?.attributes.width || "100%"}
-					height={picture.data?.attributes.height || "100%"}
+					layout="fill"
 					className={dftStyles.image}
 					alt="An image representing the article context."
 				/>

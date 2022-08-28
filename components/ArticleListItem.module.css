@@ -11,12 +11,12 @@
 }
 
 .imgContainer {
-	@apply flex flex-col relative;
-	@apply sm:block sm:static sm:min-w-[30%] sm:max-w-[30%];
+	@apply relative aspect-video;
+	@apply sm:block sm:min-w-[30%] sm:max-w-[30%];
 }
 
 .imgContainer > span {
-	@apply max-h-36 border border-none rounded !important;
+	@apply border border-none rounded !important;
 	@apply sm:h-full sm:min-w-full sm:max-h-fit sm:aspect-auto sm:shadow-compact !important;
 }
 
