@@ -5,6 +5,8 @@ import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
 import useBreakpoints from "../hooks/useBreakpoints";
 import dayjs from "dayjs";
+import Link from "next/link";
+import { BASE_URL_ARTICLES } from "../helpers/constants/baseUrls";
 
 interface ArticleListItem {
 	article: any;
@@ -70,15 +72,23 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 	return (
 		<div className={dftStyles.container}>
 			<div className={dftStyles.imgContainer}>
-				<Image
-					src={
-						picture.data?.attributes.url ||
-						"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
+				<Link
+					href={
+						BASE_URL_ARTICLES + article?.attributes?.slug || BASE_URL_ARTICLES
 					}
-					layout="fill"
-					className={dftStyles.image}
-					alt="An image representing the article context."
-				/>
+				>
+					<a>
+						<Image
+							src={
+								picture.data?.attributes.url ||
+								"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
+							}
+							layout="fill"
+							className={dftStyles.image}
+							alt="An image representing the article context."
+						/>
+					</a>
+				</Link>
 				{winBp.isBase && hashTagList()}
 			</div>
 			<div className={dftStyles.previewContainer}>

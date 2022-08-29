@@ -3,5 +3,5 @@
 }
 
 .container a {
-	@apply text-blue-500 underline hover:text-blue-700;
+	@apply text-clr-accent underline hover:contrast-150;
 }
