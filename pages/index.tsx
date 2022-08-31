@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Fragment, useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import Carousel from "../components/Carousel";
-import { MAIN_API_BASEURL } from "../helpers/constants/getEnvironment";
+import { MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
 import dftStyles from "../styles/Home.module.css";
 
 type HomeProps = {

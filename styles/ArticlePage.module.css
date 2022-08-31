@@ -1,0 +1,89 @@
+.container {
+	@apply grow flex flex-col;
+}
+
+.divider {
+	@apply border-black;
+	/* @apply sm:hidden; */
+}
+
+.contentContainer {
+	@apply flex justify-center;
+	@apply sm:py-4;
+}
+
+.articleContainer {
+	@apply flex flex-col bg-clr-primary max-w-screen-md border-none rounded-md;
+	@apply sm:bg-opacity-80 sm:border;
+}
+
+.articleContainer .header {
+	@apply flex flex-col gap-4 py-4;
+}
+
+.articleContainer .header .top {
+	@apply flex flex-col gap-4 px-4;
+}
+
+.articleContainer .header .middle {
+	@apply flex flex-col gap-2 px-4;
+}
+
+.articleContainer .header .bottom {
+	@apply flex flex-col gap-2 px-4 items-end;
+}
+
+.tagsContainer {
+	@apply flex flex-wrap gap-1;
+}
+
+.tagsContainer li {
+	@apply px-2 py-1 bg-clr-secondary border border-none rounded bg-opacity-80;
+}
+.tagsContainer li * {
+	@apply flex flex-col text-black;
+}
+
+.tagsContainer li small {
+	@apply font-bold;
+	font-size: xx-small;
+}
+
+.metaInfo {
+	@apply flex gap-2 justify-end;
+}
+
+.metaInfo .icon {
+	@apply flex shrink-0;
+}
+
+.metaInfo .author {
+	@apply flex items-center gap-2 break-all;
+}
+
+.metaInfo .author::after {
+	content: "";
+	@apply border-r-2 border-white h-full;
+}
+
+.metaInfo .time {
+	@apply flex items-center gap-2;
+}
+
+.content {
+	@apply flex flex-col gap-4 py-4;
+}
+
+.content .top {
+	@apply px-4;
+	@apply sm:flex sm:justify-center;
+}
+
+.content .top .imageArea {
+	@apply relative aspect-video;
+	@apply sm:w-4/5;
+}
+
+.content .middle {
+	@apply px-4;
+}
