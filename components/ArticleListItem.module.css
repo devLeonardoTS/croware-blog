@@ -10,8 +10,16 @@
 	@apply sm:flex-row sm:h-52 sm:gap-3 sm:py-3 sm:overflow-hidden sm:bg-white sm:bg-opacity-5;
 }
 
+.container:hover .imgContainer {
+	@apply brightness-125;
+}
+
+.container:hover .previewHead .titleLink h2 {
+	@apply text-clr-accent;
+}
+
 .imgContainer {
-	@apply relative aspect-video;
+	@apply relative aspect-video brightness-100 transition-all ease-in-out;
 	@apply sm:block sm:min-w-[30%] sm:max-w-[30%];
 }
 
@@ -30,12 +38,14 @@
 
 .previewHead {
 	@apply line-clamp-2;
-	@apply line-clamp-1;
+}
+
+.previewHead .titleLink h2 {
+	@apply transition-all ease-in-out;
 }
 
 .previewContent {
 	@apply line-clamp-3;
-	@apply sm:line-clamp-4;
 }
 
 .previewFooter {
@@ -72,11 +82,15 @@
 }
 
 .infoContainer .icon {
-	@apply flex;
+	@apply flex shrink-0;
 }
 
 .infoContainer .author {
-	@apply flex items-center gap-2;
+	@apply flex items-center gap-2 break-all;
+}
+
+.infoContainer .author * {
+	@apply line-clamp-2;
 }
 
 .infoContainer .author::after {
@@ -85,5 +99,5 @@
 }
 
 .infoContainer .time {
-	@apply flex items-center gap-2;
+	@apply flex items-center gap-2 shrink-0;
 }

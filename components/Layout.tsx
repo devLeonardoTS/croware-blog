@@ -16,7 +16,7 @@ export function Layout({ children }: LayoutProps) {
 			{children}
 			<Footer />
 
-			<Script src="./scripts/flowbite/dist/flowbite.js" />
+			<Script src="/scripts/flowbite/dist/flowbite.js" />
 		</div>
 	);
 }

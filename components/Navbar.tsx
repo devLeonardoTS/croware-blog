@@ -6,6 +6,8 @@ import { OptStyles } from "../@types/styling-types";
 import { StyleHandler } from "../helpers/styling-utils";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { IMG_CROWARE_LOGO } from "../helpers/constants/assetUrls";
 // import useWindowSize from "../hooks/useWindowSize";
 // import useBreakpoints from "../hooks/useBreakpoints";
 
@@ -28,6 +30,11 @@ export default function Navbar({ optStyles }: NavbarProps) {
 		optional: optStyles,
 	});
 
+	const router = useRouter();
+	// const
+	// console.log("asPath: ", router.asPath.split("/"));
+	// console.log("pathName: ", router.pathname);
+
 	// const winSize = useWindowSize();
 	// const winBps = useBreakpoints();
 
@@ -36,7 +43,7 @@ export default function Navbar({ optStyles }: NavbarProps) {
 			<Link href={"/"} className={styles.logoLink || undefined}>
 				<a className={styles.logoImg}>
 					<Image
-						src="https://res.cloudinary.com/devlts/image/upload/v1661556815/Croware-Type-Logo_ounepa.svg"
+						src={IMG_CROWARE_LOGO}
 						width={"100%"}
 						height={28}
 						alt="Croware's Logo"
@@ -49,7 +56,7 @@ export default function Navbar({ optStyles }: NavbarProps) {
 				}}
 			/>
 			<div className={styles.menuContainer || undefined}>
-				<p>Home</p>
+				<p className={styles.activeLink}></p>
 				<button className={styles.menuBtn || undefined}>
 					<BiMenu />
 				</button>

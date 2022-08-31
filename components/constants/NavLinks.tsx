@@ -23,10 +23,10 @@ function mkLink(name: string, path: string) {
 }
 
 const data = [
-	mkLink("Notícias", "/noticias"),
-	mkLink("Eventos", "/eventos"),
-	mkLink("Projetos", "/projetos"),
-	mkLink("Sobre", "/sobre"),
+	mkLink("Artigos", "/articles"),
+	mkLink("Eventos", "/events"),
+	mkLink("Projetos", "/projects"),
+	mkLink("Sobre", "/about"),
 ];
 
 const tempLinks = data.map(link => {

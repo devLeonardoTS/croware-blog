@@ -6,7 +6,7 @@ import { FaFeatherAlt } from "react-icons/fa";
 import useBreakpoints from "../hooks/useBreakpoints";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { BASE_URL_ARTICLES } from "../helpers/constants/baseUrls";
+import { HREF_ARTICLES, HREF_HOME } from "../helpers/constants/hrefBases";
 
 interface ArticleListItem {
 	article: any;
@@ -34,7 +34,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 		article_hashtags,
 		picture,
 		authors,
-	} = article.attributes;
+	} = article.attributes || {};
 
 	const hashTags =
 		article_hashtags?.data?.map((tag: any, index: number) => {
@@ -43,7 +43,9 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 			}
 			return (
 				<li key={`tag-${tag.id}`}>
-					<small>{tag.attributes.tag}</small>
+					<p>
+						<small>{tag.attributes.tag}</small>
+					</p>
 				</li>
 			);
 		}) || undefined;
@@ -71,29 +73,28 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 
 	return (
 		<div className={dftStyles.container}>
-			<div className={dftStyles.imgContainer}>
-				<Link
-					href={
-						BASE_URL_ARTICLES + article?.attributes?.slug || BASE_URL_ARTICLES
-					}
-				>
-					<a>
-						<Image
-							src={
-								picture.data?.attributes.url ||
-								"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
-							}
-							layout="fill"
-							className={dftStyles.image}
-							alt="An image representing the article context."
-						/>
-					</a>
-				</Link>
-				{winBp.isBase && hashTagList()}
-			</div>
+			<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+				<a className={dftStyles.imgContainer}>
+					<Image
+						src={
+							picture.data?.attributes.url ||
+							"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
+						}
+						layout="fill"
+						className={dftStyles.image}
+						alt="An image representing the article context."
+					/>
+					{winBp.isBase && hashTagList()}
+				</a>
+			</Link>
+
 			<div className={dftStyles.previewContainer}>
 				<div className={dftStyles.previewHead}>
-					<h2>{article?.attributes?.title || "Sem título..."}</h2>
+					<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+						<a className={dftStyles.titleLink}>
+							<h2>{article?.attributes?.title || "Sem título..."}</h2>
+						</a>
+					</Link>
 				</div>
 				<div className={dftStyles.previewContent}>
 					<p>{article?.attributes?.content?.excerpt || "Sem resumo..."}</p>

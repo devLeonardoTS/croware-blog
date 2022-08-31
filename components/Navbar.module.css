@@ -30,8 +30,8 @@
 	@apply sm:hidden;
 }
 
-.menuContainer > p {
-	@apply font-bold;
+.menuContainer .activeLink {
+	@apply font-bold lowercase first-letter:uppercase;
 }
 
 .menuContainer > .menuBtn > svg {
