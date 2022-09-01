@@ -16,6 +16,10 @@ export function Layout({ children }: LayoutProps) {
 			{children}
 			<Footer />
 
+			<Script
+				type="text/javascript"
+				src="/scripts/dompurify/dist/purify.min.js"
+			></Script>
 			<Script src="/scripts/flowbite/dist/flowbite.js" />
 		</div>
 	);

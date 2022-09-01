@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -101,12 +102,20 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	const [publishedAtDisplay, setPublishedAtDisplay] =
 		useState("00/00/0000 00:00");
 
+	const [articleBody, setArticleBody] = useState("");
+
 	useEffect(() => {
 		if (publishedAt) {
 			const formattedDate = dayjs(publishedAt).format("DD/MM/YYYY HH:mm");
 			setPublishedAtDisplay(formattedDate);
 		}
 	}, [publishedAt]);
+
+	useEffect(() => {
+		if (content.body) {
+			setArticleBody(DOMPurify.sanitize(content.body));
+		}
+	}, [content]);
 
 	if (dataError) {
 		return (
@@ -121,15 +130,15 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 			<div className={dftStyles.contentContainer}>
 				<section className={dftStyles.articleContainer}>
 					<div className={dftStyles.header}>
-						<div className={dftStyles.top}>
+						<div className={dftStyles.head}>
 							<h1>{title}</h1>
 							{hashTagList()}
 						</div>
 
-						<div className={dftStyles.middle}>
+						<div className={dftStyles.body}>
 							<p>{content.excerpt}</p>
 						</div>
-						<div className={dftStyles.bottom}>
+						<div className={dftStyles.footer}>
 							<div className={dftStyles.metaInfo}>
 								<div className={dftStyles.author}>
 									<div className={dftStyles.icon}>
@@ -148,7 +157,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 					</div>
 					<hr className={dftStyles.divider} />
 					<div className={dftStyles.content}>
-						<div className={dftStyles.top}>
+						<div className={dftStyles.head}>
 							<div className={dftStyles.imageArea}>
 								<Image
 									src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
@@ -158,9 +167,12 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 								/>
 							</div>
 						</div>
-						<div className={dftStyles.middle}>
-							<p>{content.body}</p>
-						</div>
+						<div
+							className={`ck-content ${dftStyles.body}`}
+							dangerouslySetInnerHTML={{
+								__html: articleBody || "<p>No content...</p>",
+							}}
+						></div>
 					</div>
 				</section>
 			</div>
