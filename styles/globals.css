@@ -20,6 +20,12 @@ body {
 	background-repeat: repeat;
 }
 
+table,
+td {
+	border: none;
+	border-style: none;
+}
+
 ol,
 ul {
 	list-style: none;

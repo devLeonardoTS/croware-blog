@@ -21,15 +21,15 @@
 	@apply flex flex-col gap-4 py-4;
 }
 
-.articleContainer .header .top {
+.articleContainer .header .head {
 	@apply flex flex-col gap-4 px-4;
 }
 
-.articleContainer .header .middle {
+.articleContainer .header .body {
 	@apply flex flex-col gap-2 px-4;
 }
 
-.articleContainer .header .bottom {
+.articleContainer .header .footer {
 	@apply flex flex-col gap-2 px-4 items-end;
 }
 
@@ -74,16 +74,21 @@
 	@apply flex flex-col gap-4 py-4;
 }
 
-.content .top {
+.content .head {
 	@apply px-4;
 	@apply sm:flex sm:justify-center;
 }
 
-.content .top .imageArea {
+.content .head .imageArea {
 	@apply relative aspect-video;
 	@apply sm:w-4/5;
 }
 
-.content .middle {
+.content .body {
 	@apply px-4;
 }
+
+/* .content .body hr {
+	@apply m-0;
+	height: 2px;
+} */
