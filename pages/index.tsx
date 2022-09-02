@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { Fragment } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import { MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
@@ -8,22 +8,24 @@ type HomeProps = {
 	articles: any;
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async context => {
 	const url = `${MAIN_API_BASEURL}api/articles?populate=*`;
-	const secondsToRevalidate = 5;
 
 	try {
 		const res = await fetch(url);
 		const data = await res.json();
 
+		if (!data) {
+			return { props: {} };
+		}
+
 		return {
-			props: {
-				articles: data,
-			},
-			revalidate: secondsToRevalidate,
+			props: { articles: data },
 		};
 	} catch {
-		return { props: {}, revalidate: secondsToRevalidate };
+		return {
+			props: {},
+		};
 	}
 };
 

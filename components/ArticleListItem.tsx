@@ -55,23 +55,6 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 		<ul className={dftStyles.tagsContainer}>{hashTags}</ul>
 	);
 
-	// const hashTagList = () => (
-	// 	<ul className={dftStyles.tagsContainer}>
-	// 		<li>
-	// 			<small>Notícias</small>
-	// 		</li>
-	// 		<li>
-	// 			<small>Descobertas</small>
-	// 		</li>
-	// 		<li>
-	// 			<small>Ciência</small>
-	// 		</li>
-	// 		<li>
-	// 			<small>Espaço</small>
-	// 		</li>
-	// 	</ul>
-	// );
-
 	return (
 		<div className={dftStyles.container}>
 			<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
@@ -101,20 +84,15 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 					<div className={dftStyles.infoContainer}>
 						<div className={dftStyles.author}>
 							<div className={dftStyles.icon}>
-								<FaFeatherAlt />
+								<FaFeatherAlt title="Autor(a)" />
 							</div>
 							<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
 						</div>
 						<div className={dftStyles.time}>
 							<div className={dftStyles.icon}>
-								<BsClockFill />
+								<BsClockFill title="Data de publicação" />
 							</div>
-							<p>
-								{publishedAt}
-								{/* {dayjs(
-									article?.attributes?.publishedAt || "00/00/0000 00:00"
-								).format("DD/MM/YYYY HH:mm")} */}
-							</p>
+							<p>{publishedAt}</p>
 						</div>
 					</div>
 					{!winBp.isBase && !winBp.isSm && hashTagList()}
