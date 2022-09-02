@@ -1,8 +1,6 @@
 import type { GetStaticProps, NextPage } from "next";
-import Image from "next/image";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import ArticleListItem from "../components/ArticleListItem";
-import Carousel from "../components/Carousel";
 import { MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
 import dftStyles from "../styles/Home.module.css";
 
@@ -12,6 +10,7 @@ type HomeProps = {
 
 export const getStaticProps: GetStaticProps = async () => {
 	const url = `${MAIN_API_BASEURL}api/articles?populate=*`;
+	const secondsToRevalidate = 5;
 
 	try {
 		const res = await fetch(url);
@@ -21,9 +20,10 @@ export const getStaticProps: GetStaticProps = async () => {
 			props: {
 				articles: data,
 			},
+			revalidate: secondsToRevalidate,
 		};
 	} catch {
-		return { props: {} };
+		return { props: {}, revalidate: secondsToRevalidate };
 	}
 };
 
@@ -70,12 +70,6 @@ const Home: NextPage<HomeProps> = ({ articles }) => {
 					</ul>
 				</section>
 			</div>
-			{/* <section className={dftStyles.carouselContainer}>
-				<Carousel />
-				<p className="text-center">
-					<strong>This is where we begin</strong>
-				</p>
-			</section> */}
 		</main>
 	);
 };
