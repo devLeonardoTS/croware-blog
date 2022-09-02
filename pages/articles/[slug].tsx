@@ -1,11 +1,6 @@
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
-import type {
-	GetStaticPaths,
-	GetStaticProps,
-	GetStaticPropsResult,
-	NextPage,
-} from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
@@ -18,40 +13,9 @@ type ArticlePageProps = {
 	article: any;
 };
 
-export const getStaticPaths: GetStaticPaths = async context => {
-	const url = `${API_ARTICLES}`;
-
-	try {
-		const res = await fetch(url);
-		const jsonData = await res.json();
-		const data = jsonData.data;
-
-		const paths = data.map((article: any) => {
-			return {
-				params: { slug: encodeURIComponent(article.attributes.slug) },
-			};
-		});
-
-		return {
-			paths: paths,
-			fallback: true,
-		};
-	} catch {
-		return {
-			paths: [],
-			fallback: true,
-		};
-	}
-};
-
-export const getStaticProps: GetStaticProps = async context => {
+export const getServerSideProps: GetServerSideProps = async context => {
 	const slug = context.params?.slug;
 	const url = `${API_ARTICLES}?filters[slug]=${slug}&populate=*`;
-
-	const resultDataNotFound: GetStaticPropsResult<any> = {
-		notFound: true,
-		revalidate: 5,
-	};
 
 	try {
 		const res = await fetch(url);
@@ -59,17 +23,16 @@ export const getStaticProps: GetStaticProps = async context => {
 		const data = jsonData.data;
 
 		if (!jsonData || !data || data.length < 1) {
-			return resultDataNotFound;
+			return { notFound: true };
 		}
 
-		const successResult: GetStaticPropsResult<any> = {
+		return {
 			props: { article: jsonData },
-			revalidate: 5,
 		};
-
-		return successResult;
 	} catch {
-		return resultDataNotFound;
+		return {
+			notFound: true,
+		};
 	}
 };
 
@@ -102,9 +65,9 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 				return;
 			}
 			return (
-				<li key={`tag-${tag.id}`}>
+				<li key={`tag-${tag?.id}`}>
 					<p>
-						<small>{tag.attributes.tag}</small>
+						<small>{tag?.attributes?.tag}</small>
 					</p>
 				</li>
 			);
@@ -157,13 +120,13 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 							<div className={dftStyles.metaInfo}>
 								<div className={dftStyles.author}>
 									<div className={dftStyles.icon}>
-										<FaFeatherAlt />
+										<FaFeatherAlt title="Autor(a)" />
 									</div>
 									<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
 								</div>
 								<div className={dftStyles.time}>
 									<div className={dftStyles.icon}>
-										<BsClockFill />
+										<BsClockFill title="Data de publicação" />
 									</div>
 									<p>{publishedAtDisplay}</p>
 								</div>
