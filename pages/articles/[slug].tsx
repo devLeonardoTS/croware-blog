@@ -1,11 +1,15 @@
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
-import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import type {
+	GetStaticPaths,
+	GetStaticProps,
+	GetStaticPropsResult,
+	NextPage,
+} from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
-import NotFound from "../../components/NotFound";
 import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
 import dftStyles from "../../styles/ArticlePage.module.css";
@@ -14,7 +18,7 @@ type ArticlePageProps = {
 	article: any;
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async context => {
 	const url = `${API_ARTICLES}`;
 
 	try {
@@ -24,43 +28,54 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 		const paths = data.map((article: any) => {
 			return {
-				params: { slug: article.attributes.slug },
+				params: { slug: encodeURIComponent(article.attributes.slug) },
 			};
-		}); // Array -> [{ params: { slug: ArticleSlug } }, ...];
+		});
 
 		return {
 			paths: paths,
-			fallback: false,
+			fallback: true,
 		};
 	} catch {
 		return {
 			paths: [],
-			fallback: false,
+			fallback: true,
 		};
 	}
 };
 
 export const getStaticProps: GetStaticProps = async context => {
 	const slug = context.params?.slug;
-	const res = await fetch(`${API_ARTICLES}?filters[slug]=${slug}&populate=*`);
-	const data = await res.json();
+	const url = `${API_ARTICLES}?filters[slug]=${slug}&populate=*`;
 
-	// console.log("receivedStaticPropsData: ", data);
-
-	if (!data) {
-		return {
-			notFound: true,
-		};
-	}
-
-	return {
-		props: { article: data },
+	const resultDataNotFound: GetStaticPropsResult<any> = {
+		notFound: true,
+		revalidate: 5,
 	};
+
+	try {
+		const res = await fetch(url);
+		const jsonData = await res.json();
+		const { data } = jsonData;
+
+		if (!jsonData || !data || data.length < 1) {
+			return resultDataNotFound;
+		}
+
+		const successResult: GetStaticPropsResult<any> = {
+			props: { article: jsonData },
+			revalidate: 5,
+		};
+
+		return successResult;
+	} catch {
+		return resultDataNotFound;
+	}
 };
 
 const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
-	const artData = article.data[0];
-	const artMeta = article.meta;
+	const artData = article?.data?.[0];
+	const artMeta = article?.meta;
 
 	const dftAttributes = {
 		dataError: true,
@@ -79,7 +94,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 		dataError,
 	} = artData?.attributes || dftAttributes; // "safe" destructuring - All destructures will be undefined if not available.
 
-	// console.log("Article Data: ", article.data);
+	// console.log("Article Data: ", article?.data);
 
 	const hashTags =
 		article_hashtags?.data?.map((tag: any, index: number) => {
@@ -112,15 +127,15 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	}, [publishedAt]);
 
 	useEffect(() => {
-		if (content.body) {
+		if (content?.body) {
 			setArticleBody(DOMPurify.sanitize(content.body));
 		}
 	}, [content]);
 
 	if (dataError) {
 		return (
-			<main className={dftStyles.container}>
-				<NotFound />
+			<main className={`${dftStyles.container} items-center justify-center`}>
+				<h1>Loading...</h1>
 			</main>
 		);
 	}

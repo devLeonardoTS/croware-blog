@@ -7,6 +7,7 @@ import useBreakpoints from "../hooks/useBreakpoints";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { HREF_ARTICLES, HREF_HOME } from "../helpers/constants/hrefBases";
+import { IMG_ARTICLE_PLACEHOLDER } from "../helpers/constants/assetUrls";
 
 interface ArticleListItem {
 	article: any;
@@ -76,10 +77,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 			<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
 				<a className={dftStyles.imgContainer}>
 					<Image
-						src={
-							picture.data?.attributes.url ||
-							"https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
-						}
+						src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
 						layout="fill"
 						className={dftStyles.image}
 						alt="An image representing the article context."
