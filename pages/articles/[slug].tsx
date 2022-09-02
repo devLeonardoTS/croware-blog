@@ -19,14 +19,15 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
 	try {
 		const res = await fetch(url);
-		const data = await res.json();
+		const jsonData = await res.json();
+		const data = jsonData.data;
 
-		if (!data) {
+		if (!jsonData || !data || data.length < 1) {
 			return { notFound: true };
 		}
 
 		return {
-			props: { article: data },
+			props: { article: jsonData },
 		};
 	} catch {
 		return {
