@@ -56,7 +56,7 @@ export const getStaticProps: GetStaticProps = async context => {
 	try {
 		const res = await fetch(url);
 		const jsonData = await res.json();
-		const { data } = jsonData;
+		const data = jsonData.data;
 
 		if (!jsonData || !data || data.length < 1) {
 			return resultDataNotFound;
@@ -151,7 +151,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						</div>
 
 						<div className={dftStyles.body}>
-							<p>{content.excerpt}</p>
+							<p>{content?.excerpt}</p>
 						</div>
 						<div className={dftStyles.footer}>
 							<div className={dftStyles.metaInfo}>
@@ -159,7 +159,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 									<div className={dftStyles.icon}>
 										<FaFeatherAlt />
 									</div>
-									<p>{authors.data?.[0]?.attributes?.name || "Unknown"}</p>
+									<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
 								</div>
 								<div className={dftStyles.time}>
 									<div className={dftStyles.icon}>
@@ -175,7 +175,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						<div className={dftStyles.head}>
 							<div className={dftStyles.imageArea}>
 								<Image
-									src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
+									src={picture?.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
 									layout="fill"
 									className={dftStyles.image}
 									alt="An image representing the article context."
