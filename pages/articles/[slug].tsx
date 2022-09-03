@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import DOMPurify from "dompurify";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -7,6 +6,7 @@ import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
 import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
+import ownDOMPurify from "../../helpers/ownDOMPurify";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
 type ArticlePageProps = {
@@ -51,7 +51,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 		article_category,
 		article_hashtags,
 		picture,
-		authors,
+		author,
 		publishedAt,
 		updatedAt,
 		dataError,
@@ -91,7 +91,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 
 	useEffect(() => {
 		if (content?.body) {
-			setArticleBody(DOMPurify.sanitize(content.body));
+			setArticleBody(ownDOMPurify(content.body));
 		}
 	}, [content]);
 
@@ -114,7 +114,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						</div>
 
 						<div className={dftStyles.body}>
-							<p>{content?.excerpt}</p>
+							<p>{content?.excerpt || "No content..."}</p>
 						</div>
 						<div className={dftStyles.footer}>
 							<div className={dftStyles.metaInfo}>
@@ -122,7 +122,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 									<div className={dftStyles.icon}>
 										<FaFeatherAlt title="Autor(a)" />
 									</div>
-									<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
+									<p>{author?.data?.attributes?.name || "Unknown"}</p>
 								</div>
 								<div className={dftStyles.time}>
 									<div className={dftStyles.icon}>

@@ -34,7 +34,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 		article_category,
 		article_hashtags,
 		picture,
-		authors,
+		author,
 	} = article.attributes || {};
 
 	const hashTags =
@@ -86,7 +86,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 							<div className={dftStyles.icon}>
 								<FaFeatherAlt title="Autor(a)" />
 							</div>
-							<p>{authors?.data?.[0]?.attributes?.name || "Unknown"}</p>
+							<p>{author?.data?.attributes?.name || "Unknown"}</p>
 						</div>
 						<div className={dftStyles.time}>
 							<div className={dftStyles.icon}>
