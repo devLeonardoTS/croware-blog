@@ -430,3 +430,7 @@
 	@apply underline;
 	@apply hover:text-clr-accent;
 }
+
+.ck-content .raw-html-embed iframe {
+	@apply aspect-video h-full w-full;
+}
