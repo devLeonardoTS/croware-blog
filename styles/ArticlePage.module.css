@@ -1,5 +1,5 @@
 .container {
-	@apply grow flex flex-col;
+	@apply grow flex flex-col break-all;
 }
 
 .divider {
