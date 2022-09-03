@@ -1,4 +1,5 @@
 .container {
 	@apply max-w-screen-xl min-h-screen overflow-hidden;
 	@apply flex flex-col mx-auto;
+	word-break: break-word;
 }
