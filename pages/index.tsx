@@ -9,7 +9,7 @@ type HomeProps = {
 };
 
 export const getServerSideProps: GetServerSideProps = async context => {
-	const url = `${MAIN_API_BASEURL}api/articles?populate=*`;
+	const url = `${MAIN_API_BASEURL}api/articles?populate=*&sort=publishedAt:desc`;
 
 	try {
 		const res = await fetch(url);

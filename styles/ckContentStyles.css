@@ -424,3 +424,9 @@
 		display: none;
 	}
 }
+
+/* CUSTOM */
+.ck-content a {
+	@apply underline;
+	@apply hover:text-clr-accent;
+}
