@@ -57,7 +57,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 
 	return (
 		<div className={dftStyles.container}>
-			<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+			<Link href={HREF_ARTICLES + "/" + article?.attributes?.slug || HREF_HOME}>
 				<a className={dftStyles.imgContainer}>
 					<Image
 						src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
@@ -71,7 +71,9 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 
 			<div className={dftStyles.previewContainer}>
 				<div className={dftStyles.previewHead}>
-					<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+					<Link
+						href={HREF_ARTICLES + "/" + article?.attributes?.slug || HREF_HOME}
+					>
 						<a className={dftStyles.titleLink}>
 							<h2>{article?.attributes?.title || "Sem título..."}</h2>
 						</a>

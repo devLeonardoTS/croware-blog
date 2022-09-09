@@ -3,8 +3,9 @@ import "../styles/ckContentStyles.css";
 import type { AppProps } from "next/app";
 import Layout from "../components/Layout";
 import Head from "next/head";
+import { SessionProvider } from "../components/providers/SessionProvider";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	return (
 		<Layout>
 			<Head>
@@ -15,7 +16,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Component {...pageProps} />
+			<SessionProvider>
+				<Component {...pageProps} />
+			</SessionProvider>
 		</Layout>
 	);
 }

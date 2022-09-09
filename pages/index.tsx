@@ -1,7 +1,7 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { Fragment } from "react";
 import ArticleListItem from "../components/ArticleListItem";
-import { MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
+import { SS_MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
 import dftStyles from "../styles/Home.module.css";
 
 type HomeProps = {
@@ -9,7 +9,7 @@ type HomeProps = {
 };
 
 export const getServerSideProps: GetServerSideProps = async context => {
-	const url = `${MAIN_API_BASEURL}api/articles?populate=*&sort=publishedAt:desc`;
+	const url = `${SS_MAIN_API_BASEURL}api/articles?populate=*&sort=publishedAt:desc`;
 
 	try {
 		const res = await fetch(url);
