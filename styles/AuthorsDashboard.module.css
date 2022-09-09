@@ -1,0 +1,26 @@
+.container {
+	@apply flex flex-col grow;
+}
+
+/* .contentContainer {
+	@apply flex flex-col grow py-4 bg-clr-primary;
+	@apply sm:bg-transparent;
+}
+
+.articlesContainer {
+	@apply flex flex-col grow gap-4;
+}
+
+.divider {
+	@apply border-black;
+	@apply sm:hidden;
+}
+
+.articlesHeader {
+	@apply px-4 uppercase;
+	@apply sm:bg-white sm:bg-opacity-5 sm:py-4;
+}
+
+.articlesList {
+	@apply flex flex-col gap-4;
+} */

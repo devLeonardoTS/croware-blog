@@ -1,0 +1,30 @@
+.container {
+	@apply w-full overflow-hidden m-auto p-6;
+}
+
+.container :global(.ck) {
+	@apply max-w-screen-md mx-auto !important;
+}
+
+.container :global(.ck u) {
+	@apply underline !important;
+}
+
+.container :global(.ck .ck-toolbar) {
+	@apply border border-none rounded-t !important;
+}
+
+.container :global(.ck .ck-content) {
+	@apply border border-none rounded-b !important;
+}
+
+.container :global(.ck *) {
+	@apply text-black !important;
+}
+/* .container :global(.ck-toolbar) {
+	@apply flex h-20 !important;
+} */
+
+.container :global(.ck-restricted-editing_mode_standard) {
+	@apply min-h-[250px] !important;
+}
