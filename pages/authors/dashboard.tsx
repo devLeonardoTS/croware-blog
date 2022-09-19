@@ -2,6 +2,12 @@ import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { MouseEventHandler, useState } from "react";
 import { useSessionContext } from "../../components/providers/SessionProvider";
+import {
+	useSignIn,
+	useSignOut,
+	useUser,
+	useUserAuthStatus,
+} from "../../components/providers/ZUserSession";
 
 const OwnCKEditor = dynamic(
 	async () => {
@@ -17,24 +23,33 @@ const Dashboard: NextPage = () => {
 	const [email, setEmail] = useState("");
 	const [pwd, setPwd] = useState("");
 
-	const session = useSessionContext();
+	// const session = useSessionContext();
+
+	const user = useUser();
+	const userAuthStatus = useUserAuthStatus();
+	const signIn = useSignIn();
+	const signOut = useSignOut();
 
 	const handleClickSignIn: MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
-		await session?.signIn({ identifier: email, password: pwd });
+		// await session?.signIn({ identifier: email, password: pwd });
+		await signIn({ identifier: email, password: pwd });
 	};
 
 	const handleClickSignOut: MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
-		await session?.signOut();
+		// await session?.signOut();
+		await signOut();
 	};
 
 	const handleClickCheckUser: MouseEventHandler<
 		HTMLButtonElement
 	> = async e => {
 		e.preventDefault();
-		console.log("Data:", session?.user);
-		console.log("status:", session?.status);
+		// console.log("Data:", session?.user);
+		// console.log("status:", session?.status);
+		console.log("Data:", user);
+		console.log("status:", userAuthStatus);
 	};
 
 	return (
@@ -70,7 +85,7 @@ const Dashboard: NextPage = () => {
 				<button onClick={handleClickCheckUser}>Check</button>
 			</div>
 
-			{session?.status === "authenticated" ? (
+			{userAuthStatus === "authenticated" ? (
 				<div className="flex flex-col gap-4">
 					<OwnCKEditor
 						value={editorContent}
