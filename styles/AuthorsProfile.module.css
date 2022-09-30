@@ -1,0 +1,55 @@
+.container {
+	@apply flex flex-col grow;
+}
+
+.contentContainer {
+	@apply py-4;
+}
+
+.profileContainer {
+	@apply bg-clr-primary p-4;
+}
+
+.profileContainer .banner {
+	@apply w-full h-[136px] overflow-hidden rounded-sm;
+}
+
+.profileContainer .banner img {
+	@apply object-cover object-center h-full;
+}
+
+.profileContainer .content {
+	@apply flex flex-col gap-4;
+}
+
+/* Width of ".userPicture" ".img" must be the same! */
+.profileContainer .content .userPictureContainer {
+	@apply relative h-[16px] w-[120px];
+	@apply self-center;
+}
+
+.profileContainer .content .userPictureContainer img {
+	@apply absolute h-[120px] overflow-hidden;
+	@apply border-[4px] rounded-full;
+	@apply bottom-[0px];
+	@apply object-cover object-center;
+}
+
+.profileContainer .content .userDetailsContainer {
+	@apply flex flex-col gap-4;
+}
+
+.profileContainer .content .userDetailsContainer .head {
+	@apply text-center;
+	text-shadow: 0 0 6px black, 0 0 6px black, 0 0 6px black, 0 0 6px black;
+}
+
+.tabsContainer {
+	@apply flex gap-4 overflow-hidden border;
+	@apply p-4;
+	@apply bg-clr-primary;
+}
+
+.editorContainer {
+	@apply flex flex-col gap-4;
+}

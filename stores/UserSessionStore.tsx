@@ -1,14 +1,8 @@
 import dayjs from "dayjs";
-import {
-	createContext,
-	FC,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
-import { AUTHENTICATED_USER_LSK } from "../../helpers/constants/localStorageKeys";
-import { OwnAxios } from "../../helpers/utilities/OwnAxios";
+import { ReactNode } from "react";
+import create from "zustand";
+import { AUTHENTICATED_USER_LSK } from "../helpers/constants/localStorageKeys";
+import { OwnAxios } from "../helpers/utilities/OwnAxios";
 
 // Types.
 type SessionProviderProps = {
@@ -31,21 +25,22 @@ type SessionUser = {
 };
 
 type SessionStatus = "unsigned" | "loading" | "authenticated";
-
 type SessionContextType = {
 	user: SessionUser | undefined;
 	status: SessionStatus;
 	signIn(credentials: UserCredentials): Promise<void>;
 	signOut(): Promise<void>;
+	tryRefresh(): Promise<void>;
 };
 
-// Session Hook.
-const useUserSession = () => {
-	const [user, setUser] = useState<SessionUser | undefined>(undefined);
-	const [status, setStatus] = useState<SessionStatus>("unsigned");
-
+// Store
+const useUserSession = create<SessionContextType>((set, get) => {
 	const signIn = async ({ identifier, password }: UserCredentials) => {
-		setStatus("loading");
+		if (get().user) {
+			return;
+		}
+
+		set({ status: "loading" });
 
 		const reqController = new AbortController();
 
@@ -71,16 +66,22 @@ const useUserSession = () => {
 			});
 
 		if (!data) {
-			signOut();
+			get().signOut();
 		}
 
 		if (data) {
 			// console.log("Auth data:", data);
-			setUser({
-				id: String(data.user.id),
-				email: String(data.user.email),
+			set(() => {
+				return {
+					user: {
+						id: String(data.user.id),
+						email: String(data.user.email),
+					},
+				};
 			});
-			setStatus("authenticated");
+
+			set({ status: "authenticated" });
+
 			OwnAxios.setAuthHeader(data.jwt);
 
 			localStorage.setItem(
@@ -91,15 +92,15 @@ const useUserSession = () => {
 						email: data.user.email,
 					},
 					jwt: data.jwt,
-					expiresAt: dayjs(Date.now()).add(1, "minutes").toISOString(),
+					expiresAt: dayjs(Date.now()).add(24, "hours").toISOString(),
 				})
 			);
 		}
 	};
 
 	const signOut = async () => {
-		setStatus("unsigned");
-		setUser(undefined);
+		set({ status: "unsigned" });
+		set({ user: undefined });
 		OwnAxios.setAuthHeader();
 		localStorage.removeItem(AUTHENTICATED_USER_LSK);
 	};
@@ -107,7 +108,7 @@ const useUserSession = () => {
 	const tryRefresh = async () => {
 		const storedUser = localStorage.getItem(AUTHENTICATED_USER_LSK);
 		if (!storedUser) {
-			signOut();
+			get().signOut();
 			return;
 		}
 
@@ -115,39 +116,29 @@ const useUserSession = () => {
 
 		const isExpired = expiresAt && dayjs().isAfter(dayjs(expiresAt));
 		if (isExpired) {
-			console.log("Session expired, please log in again!");
-			signOut();
+			alert("Your session expired, please log in again!");
+			get().signOut();
 			return;
 		}
 
-		setUser(userData);
-		setStatus("authenticated");
+		set({ user: userData });
+		set({ status: "authenticated" });
 		OwnAxios.setAuthHeader(jwt);
 	};
 
-	useEffect(() => {
-		if (!user) {
-			tryRefresh();
-		}
-	});
+	return {
+		user: undefined,
+		status: "unsigned",
+		signIn: signIn,
+		signOut: signOut,
+		tryRefresh: tryRefresh,
+	};
+});
 
-	return { user, status, signIn, signOut };
-};
-// Context.
-const UserSessionCtx = createContext<SessionContextType | undefined>(undefined);
-
-const SessionProvider: FC<SessionProviderProps> = ({ children }) => {
-	const userSession = useUserSession();
-
-	return (
-		<UserSessionCtx.Provider value={userSession}>
-			{children}
-		</UserSessionCtx.Provider>
-	);
-};
-
-const useSessionContext = () => {
-	return useContext(UserSessionCtx);
-};
-
-export { SessionProvider, useSessionContext };
+// Facade Layer.
+export const useUser = () => useUserSession(state => state.user);
+export const useUserAuthStatus = () => useUserSession(state => state.status);
+export const useSignIn = () => useUserSession(state => state.signIn);
+export const useSignOut = () => useUserSession(state => state.signOut);
+export const useTryRefreshUserAuth = () =>
+	useUserSession(state => state.tryRefresh);

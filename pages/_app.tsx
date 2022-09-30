@@ -3,12 +3,8 @@ import "../styles/ckContentStyles.css";
 import type { AppProps } from "next/app";
 import Layout from "../components/Layout";
 import Head from "next/head";
-import { SessionProvider } from "../components/providers/SessionProvider";
 import { useEffect } from "react";
-import {
-	useTryRefreshUserAuth,
-	useUser,
-} from "../components/providers/ZUserSession";
+import { useTryRefreshUserAuth, useUser } from "../stores/UserSessionStore";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const user = useUser();
@@ -30,9 +26,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			{/* <SessionProvider> */}
 			<Component {...pageProps} />
-			{/* </SessionProvider> */}
 		</Layout>
 	);
 }
