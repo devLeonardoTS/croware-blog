@@ -1,7 +1,19 @@
+import {
+	Button,
+	Divider,
+	IconButton,
+	ListItemIcon,
+	Menu,
+	MenuItem,
+	Tab,
+	Tabs,
+} from "@mui/material";
 import { NextPage } from "next";
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import { useState } from "react";
+import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { BiDotsVertical } from "react-icons/bi";
+import { FaCog, FaFeatherAlt, FaUserEdit } from "react-icons/fa";
+import { GoSignOut } from "react-icons/go";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
 const OwnCKEditor = dynamic(
@@ -12,8 +24,141 @@ const OwnCKEditor = dynamic(
 	{ ssr: false, loading: () => <div>Loading Editor...</div> }
 );
 
+type PageTabs = "PUBLICACOES" | "COLABS";
+
+const PublicationList = () => {
+	return (
+		<div className="p-4">
+			<p>{"Publicações do autor."}</p>
+		</div>
+	);
+};
+
+const ColabsList = () => {
+	return (
+		<div className="p-4">
+			<p>{"Colaborações do autor."}</p>
+		</div>
+	);
+};
+
+const panelSelector = (tab: boolean | number) => {
+	switch (tab) {
+		case 0:
+			return PublicationList();
+		case 1:
+			return ColabsList();
+		default:
+			return null;
+	}
+};
+
+const getEditorPanel = (
+	editorState: [string, Dispatch<SetStateAction<string>>]
+) => {
+	const [editorContent, setEditorContent] = editorState;
+
+	return (
+		<div className={dftStyles.editorContainer}>
+			<OwnCKEditor
+				value={editorContent}
+				name="editor"
+				onChange={(data: any) => {
+					setEditorContent(data);
+				}}
+			/>
+		</div>
+	);
+};
+
+const getAuthorDialogMenu = (
+	anchorEl: null | HTMLElement,
+	open: boolean,
+	handlers: {
+		closeHandler: () => void;
+		newPublicationHandler: () => void;
+	}
+) => {
+	return (
+		<Menu
+			id="author-menu"
+			anchorEl={anchorEl}
+			open={open}
+			onClose={handlers.closeHandler}
+			MenuListProps={{
+				"aria-labelledby": "basic-button",
+			}}
+			anchorOrigin={{
+				vertical: "center",
+				horizontal: "left",
+			}}
+			transformOrigin={{
+				vertical: "top",
+				horizontal: "right",
+			}}
+			classes={{
+				paper: dftStyles.dialogMenu,
+			}}
+		>
+			<MenuItem
+				onClick={() => {
+					handlers.closeHandler();
+					handlers.newPublicationHandler();
+				}}
+			>
+				<FaFeatherAlt />
+				Nova publicação
+			</MenuItem>
+
+			<MenuItem
+				onClick={() => {
+					handlers.closeHandler();
+				}}
+			>
+				<FaUserEdit />
+				Editar perfil
+			</MenuItem>
+
+			<Divider />
+
+			<MenuItem
+				onClick={() => {
+					handlers.closeHandler();
+				}}
+			>
+				<GoSignOut />
+				Sign out
+			</MenuItem>
+		</Menu>
+	);
+};
+
 const Profile: NextPage = () => {
-	const [editorContent, setEditorContent] = useState("");
+	const editorState = useState("");
+
+	const [customPanel, setCustomPanel] = useState<ReactNode>(null);
+
+	const [currentTab, setCurrentTab] = useState<boolean | number>(0);
+
+	const [authorMenuAnchor, setAuthorMenuAnchor] = useState<null | HTMLElement>(
+		null
+	);
+	const isAuthorMenuOpen = Boolean(authorMenuAnchor);
+	const closeAuthorDialogMenu = () => {
+		setAuthorMenuAnchor(null);
+	};
+
+	const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+		setCurrentTab(newValue);
+		setCustomPanel(null);
+	};
+
+	const handleNewPublicationClick = () => {
+		setCurrentTab(false);
+		setCustomPanel(getEditorPanel(editorState));
+	};
+
+	const currentPanel = panelSelector(currentTab);
 
 	return (
 		<main className={dftStyles.container}>
@@ -26,6 +171,30 @@ const Profile: NextPage = () => {
 							height={"100%"}
 							alt="User profile's banner"
 						/>
+						<menu className={dftStyles.bannerIconContainer}>
+							<li key="author-menu">
+								<>
+									<IconButton
+										classes={{
+											root: dftStyles.bannerIcon,
+										}}
+										aria-label={"Author's menu"}
+										aria-controls={isAuthorMenuOpen ? "author-menu" : undefined}
+										aria-haspopup={"true"}
+										aria-expanded={isAuthorMenuOpen ? "true" : undefined}
+										onClick={ev => {
+											setAuthorMenuAnchor(ev.currentTarget);
+										}}
+									>
+										<FaCog />
+									</IconButton>
+									{getAuthorDialogMenu(authorMenuAnchor, isAuthorMenuOpen, {
+										closeHandler: closeAuthorDialogMenu,
+										newPublicationHandler: handleNewPublicationClick,
+									})}
+								</>
+							</li>
+						</menu>
 					</div>
 					<div className={dftStyles.content}>
 						<div className={dftStyles.userPictureContainer}>
@@ -53,107 +222,25 @@ const Profile: NextPage = () => {
 					</div>
 				</div>
 				<div className={dftStyles.tabsContainer}>
-					<button>{"Tab: PUBLICAÇÕES"}</button>
-					<button>{"Tab: COLABORAÇÕES"}</button>
-				</div>
-				<div className={dftStyles.tabPanel}>
-					<div className={dftStyles.panelHead}>
-						<p>{"Panel header"}</p>
-					</div>
-				</div>
-				<div className={dftStyles.editorContainer}>
-					<OwnCKEditor
-						value={editorContent}
-						name="editor"
-						onChange={(data: any) => {
-							setEditorContent(data);
+					<Tabs
+						value={currentTab}
+						onChange={handleTabChange}
+						variant="scrollable"
+						scrollButtons="auto"
+						allowScrollButtonsMobile
+						aria-label="Scrollable tabs to view author generated data, like publications or colabs."
+						classes={{
+							indicator: dftStyles.tabsIndicator,
 						}}
-					/>
+					>
+						<Tab label="Publicações" />
+						<Tab label="Colaborações" />
+					</Tabs>
 				</div>
+				<div className={dftStyles.tabPanel}>{currentPanel || customPanel}</div>
 			</div>
 		</main>
 	);
 };
-
-// const Dashboard: NextPage = () => {
-// 	const [editorContent, setEditorContent] = useState("");
-
-// 	const [email, setEmail] = useState("");
-// 	const [pwd, setPwd] = useState("");
-
-// 	const user = useUser();
-// 	const userAuthStatus = useUserAuthStatus();
-// 	const signIn = useSignIn();
-// 	const signOut = useSignOut();
-
-// 	const handleClickSignIn: MouseEventHandler<HTMLButtonElement> = async e => {
-// 		e.preventDefault();
-// 		await signIn({ identifier: email, password: pwd });
-// 	};
-
-// 	const handleClickSignOut: MouseEventHandler<HTMLButtonElement> = async e => {
-// 		e.preventDefault();
-// 		await signOut();
-// 	};
-
-// 	const handleClickCheckUser: MouseEventHandler<
-// 		HTMLButtonElement
-// 	> = async e => {
-// 		e.preventDefault();
-// 		console.log("Data:", user);
-// 		console.log("status:", userAuthStatus);
-// 	};
-
-// 	return (
-// 		<div className="grow">
-// 			<div className="">
-// 				<h1>{"I'm the writer's dashboard."}</h1>
-// 				<h1>{"Writer Articles"}</h1>
-// 				<h1>{"I'm the writer's information card."}</h1>
-// 			</div>
-// 			<div className="flex gap-4">
-// 				<div>
-// 					<p>Email</p>
-// 					<input
-// 						className="text-black"
-// 						type="text"
-// 						name="email"
-// 						value={email}
-// 						onChange={ev => setEmail(ev.target.value)}
-// 					/>
-// 				</div>
-// 				<div>
-// 					<p>Password</p>
-// 					<input
-// 						className="text-black"
-// 						type="password"
-// 						name="password"
-// 						value={pwd}
-// 						onChange={ev => setPwd(ev.target.value)}
-// 					/>
-// 				</div>
-// 				<button onClick={handleClickSignIn}>Sign-in</button>
-// 				<button onClick={handleClickSignOut}>Sign-out</button>
-// 				<button onClick={handleClickCheckUser}>Check</button>
-// 			</div>
-
-// 			{userAuthStatus === "authenticated" ? (
-// 				<div className="flex flex-col gap-4">
-// 					<OwnCKEditor
-// 						value={editorContent}
-// 						name="editor"
-// 						onChange={(data: any) => {
-// 							setEditorContent(data);
-// 						}}
-// 					/>
-// 				</div>
-// 			) : (
-// 				<div className="p-6">
-// 					<p>Authenticated resource. Please sign-in</p>
-// 				</div>
-// 			)}
-// 		</div>
-// 	);
-// };
 
 export default Profile;

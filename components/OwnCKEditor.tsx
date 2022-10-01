@@ -136,6 +136,11 @@ function OwnCKEditor({ onChange, name, value }) {
 				data={value}
 				config={configs()}
 				onReady={editor => {
+					if (!editor) {
+						// console.log("[Editor]: Failed to load.");
+						return;
+					}
+
 					editor.plugins.get("FileRepository").createUploadAdapter = loader => {
 						return new CustomUploadAdapter(loader);
 					};

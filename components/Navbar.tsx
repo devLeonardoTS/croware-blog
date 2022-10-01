@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import NavLinks from "./constants/NavLinks";
 import dftStyles from "./Navbar.module.css";
 import { BiMenu } from "react-icons/bi";
@@ -6,10 +6,7 @@ import { OptStyles } from "../@types/styling-types";
 import { StyleHandler } from "../helpers/styling-utils";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { IMG_CROWARE_LOGO } from "../helpers/constants/assetUrls";
-// import useWindowSize from "../hooks/useWindowSize";
-// import useBreakpoints from "../hooks/useBreakpoints";
 
 type NavbarStyles = {
 	[key: string]: string | undefined;
@@ -29,14 +26,6 @@ export default function Navbar({ optStyles }: NavbarProps) {
 		default: dftStyles,
 		optional: optStyles,
 	});
-
-	const router = useRouter();
-	// const
-	// console.log("asPath: ", router.asPath.split("/"));
-	// console.log("pathName: ", router.pathname);
-
-	// const winSize = useWindowSize();
-	// const winBps = useBreakpoints();
 
 	return (
 		<nav className={styles.container || undefined}>
