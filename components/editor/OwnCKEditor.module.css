@@ -1,5 +1,5 @@
 .container {
-	@apply w-full overflow-hidden m-auto p-6;
+	@apply w-full overflow-hidden;
 }
 
 .container :global(.ck) {

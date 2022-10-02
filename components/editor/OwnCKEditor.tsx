@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Editor as CustomEditor } from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor as MyCKEditor } from "@ckeditor/ckeditor5-react";
 import dftStyles from "./OwnCKEditor.module.css";
@@ -126,9 +126,28 @@ const configs = () => {
 	};
 };
 
-function OwnCKEditor({ onChange, name, value }) {
+type OwnCkEditorStyles = {
+	container: string;
+};
+
+type OwnCkEditorProps = {
+	name: string;
+	value: string;
+	styles?: OwnCkEditorStyles;
+	onReady?: (editor: CustomEditor) => void;
+	onChange?: (event: Event, editor: CustomEditor) => void;
+	onBlur?: (event: Event, editor: CustomEditor) => void;
+	onFocus?: (event: Event, editor: CustomEditor) => void;
+	onError?: (event: Event, editor: CustomEditor) => void;
+};
+
+function OwnCKEditor({ onChange, name, value, styles }: OwnCkEditorProps) {
 	return (
-		<div className={dftStyles.container}>
+		<div
+			className={`${dftStyles.container}${
+				styles ? " " + styles.container : ""
+			}`}
+		>
 			<MyCKEditor
 				type=""
 				name={name}

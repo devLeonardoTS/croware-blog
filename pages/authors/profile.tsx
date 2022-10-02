@@ -14,22 +14,23 @@ import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { BiDotsVertical } from "react-icons/bi";
 import { FaCog, FaFeatherAlt, FaUserEdit } from "react-icons/fa";
 import { GoSignOut } from "react-icons/go";
+import EditorPanel from "../../components/panels/EditorPanel";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
-const OwnCKEditor = dynamic(
-	async () => {
-		const m = await import("../../components/OwnCKEditor");
-		return m.default;
-	},
-	{ ssr: false, loading: () => <div>Loading Editor...</div> }
-);
+// const OwnCKEditor = dynamic(
+// 	async () => {
+// 		const m = await import("../../components/OwnCKEditor");
+// 		return m.default;
+// 	},
+// 	{ ssr: false, loading: () => <div>Loading Editor...</div> }
+// );
 
-type PageTabs = "PUBLICACOES" | "COLABS";
+// type PageTabs = "PUBLICACOES" | "COLABS";
 
-const PublicationList = () => {
+const ArticleList = () => {
 	return (
 		<div className="p-4">
-			<p>{"Publicações do autor."}</p>
+			<p>{"Artigos do autor."}</p>
 		</div>
 	);
 };
@@ -42,34 +43,44 @@ const ColabsList = () => {
 	);
 };
 
+const StoredArticles = () => {
+	return (
+		<div className="p-4">
+			<p>{"Artigos não publicados."}</p>
+		</div>
+	);
+};
+
 const panelSelector = (tab: boolean | number) => {
 	switch (tab) {
 		case 0:
-			return PublicationList();
+			return ArticleList();
 		case 1:
 			return ColabsList();
+		case 2:
+			return StoredArticles();
 		default:
 			return null;
 	}
 };
 
-const getEditorPanel = (
-	editorState: [string, Dispatch<SetStateAction<string>>]
-) => {
-	const [editorContent, setEditorContent] = editorState;
+// const getEditorPanel = (
+// 	editorState: [string, Dispatch<SetStateAction<string>>]
+// ) => {
+// 	const [editorContent, setEditorContent] = editorState;
 
-	return (
-		<div className={dftStyles.editorContainer}>
-			<OwnCKEditor
-				value={editorContent}
-				name="editor"
-				onChange={(data: any) => {
-					setEditorContent(data);
-				}}
-			/>
-		</div>
-	);
-};
+// 	return (
+// 		<div className={dftStyles.editorContainer}>
+// 			<OwnCKEditor
+// 				value={editorContent}
+// 				name="editor"
+// 				onChange={(data: any) => {
+// 					setEditorContent(data);
+// 				}}
+// 			/>
+// 		</div>
+// 	);
+// };
 
 const getAuthorDialogMenu = (
 	anchorEl: null | HTMLElement,
@@ -155,7 +166,7 @@ const Profile: NextPage = () => {
 
 	const handleNewPublicationClick = () => {
 		setCurrentTab(false);
-		setCustomPanel(getEditorPanel(editorState));
+		setCustomPanel(<EditorPanel />);
 	};
 
 	const currentPanel = panelSelector(currentTab);
@@ -221,6 +232,9 @@ const Profile: NextPage = () => {
 						</div>
 					</div>
 				</div>
+
+				<Divider />
+
 				<div className={dftStyles.tabsContainer}>
 					<Tabs
 						value={currentTab}
@@ -233,8 +247,9 @@ const Profile: NextPage = () => {
 							indicator: dftStyles.tabsIndicator,
 						}}
 					>
-						<Tab label="Publicações" />
+						<Tab label="Artigos" />
 						<Tab label="Colaborações" />
+						<Tab label="Artigos Armazenados *" />
 					</Tabs>
 				</div>
 				<div className={dftStyles.tabPanel}>{currentPanel || customPanel}</div>

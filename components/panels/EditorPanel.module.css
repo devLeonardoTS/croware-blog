@@ -1,0 +1,17 @@
+.container {
+	@apply flex flex-col gap-4;
+}
+
+.editorContainer {
+	@apply flex flex-col gap-4 p-4;
+}
+
+.editorContainer .actions {
+	@apply flex gap-2 justify-end;
+}
+
+.editorContainer .actions :global(.MuiButton-root) {
+	@apply border-clr-secondary text-clr-secondary;
+	@apply hover:border-clr-accent hover:text-clr-accent !important;
+	@apply active:border-clr-accent active:text-clr-accent !important;
+}

@@ -19,7 +19,7 @@
 }
 
 .profileContainer .banner .bannerIconContainer {
-	@apply flex flex-col gap-2 justify-end;
+	@apply flex flex-col gap-2;
 	@apply absolute bottom-0 right-0;
 	@apply h-full w-10;
 	@apply bg-black bg-opacity-50;
