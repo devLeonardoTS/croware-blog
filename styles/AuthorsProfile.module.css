@@ -3,11 +3,15 @@
 }
 
 .contentContainer {
-	@apply py-4;
+	@apply flex flex-col max-w-screen-md py-4 mx-auto gap-4;
 }
 
 .profileContainer {
-	@apply bg-clr-primary p-4;
+	@apply bg-clr-primary;
+}
+
+.profileContainer .head {
+	@apply p-4;
 }
 
 .profileContainer .banner {

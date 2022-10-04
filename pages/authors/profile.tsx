@@ -1,31 +1,11 @@
-import {
-	Button,
-	Divider,
-	IconButton,
-	ListItemIcon,
-	Menu,
-	MenuItem,
-	Tab,
-	Tabs,
-} from "@mui/material";
+import { Divider, IconButton, Menu, MenuItem, Tab, Tabs } from "@mui/material";
 import { NextPage } from "next";
-import dynamic from "next/dynamic";
-import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { BiDotsVertical } from "react-icons/bi";
+import React, { ReactNode, useState } from "react";
 import { FaCog, FaFeatherAlt, FaUserEdit } from "react-icons/fa";
 import { GoSignOut } from "react-icons/go";
+
 import EditorPanel from "../../components/panels/EditorPanel";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
-
-// const OwnCKEditor = dynamic(
-// 	async () => {
-// 		const m = await import("../../components/OwnCKEditor");
-// 		return m.default;
-// 	},
-// 	{ ssr: false, loading: () => <div>Loading Editor...</div> }
-// );
-
-// type PageTabs = "PUBLICACOES" | "COLABS";
 
 const ArticleList = () => {
 	return (
@@ -64,24 +44,6 @@ const panelSelector = (tab: boolean | number) => {
 	}
 };
 
-// const getEditorPanel = (
-// 	editorState: [string, Dispatch<SetStateAction<string>>]
-// ) => {
-// 	const [editorContent, setEditorContent] = editorState;
-
-// 	return (
-// 		<div className={dftStyles.editorContainer}>
-// 			<OwnCKEditor
-// 				value={editorContent}
-// 				name="editor"
-// 				onChange={(data: any) => {
-// 					setEditorContent(data);
-// 				}}
-// 			/>
-// 		</div>
-// 	);
-// };
-
 const getAuthorDialogMenu = (
 	anchorEl: null | HTMLElement,
 	open: boolean,
@@ -110,6 +72,7 @@ const getAuthorDialogMenu = (
 			classes={{
 				paper: dftStyles.dialogMenu,
 			}}
+			disableScrollLock
 		>
 			<MenuItem
 				onClick={() => {
@@ -175,83 +138,88 @@ const Profile: NextPage = () => {
 		<main className={dftStyles.container}>
 			<div className={dftStyles.contentContainer}>
 				<div className={dftStyles.profileContainer}>
-					<div className={dftStyles.banner}>
-						<img
-							src={"https://wallpaperaccess.com/full/859076.jpg"}
-							width={"100%"}
-							height={"100%"}
-							alt="User profile's banner"
-						/>
-						<menu className={dftStyles.bannerIconContainer}>
-							<li key="author-menu">
-								<>
-									<IconButton
-										classes={{
-											root: dftStyles.bannerIcon,
-										}}
-										aria-label={"Author's menu"}
-										aria-controls={isAuthorMenuOpen ? "author-menu" : undefined}
-										aria-haspopup={"true"}
-										aria-expanded={isAuthorMenuOpen ? "true" : undefined}
-										onClick={ev => {
-											setAuthorMenuAnchor(ev.currentTarget);
-										}}
-									>
-										<FaCog />
-									</IconButton>
-									{getAuthorDialogMenu(authorMenuAnchor, isAuthorMenuOpen, {
-										closeHandler: closeAuthorDialogMenu,
-										newPublicationHandler: handleNewPublicationClick,
-									})}
-								</>
-							</li>
-						</menu>
-					</div>
-					<div className={dftStyles.content}>
-						<div className={dftStyles.userPictureContainer}>
+					<div className={dftStyles.head}>
+						<div className={dftStyles.banner}>
 							<img
-								src={
-									"https://pm1.narvii.com/7700/9900de90d3598fd01f7b009aefed860e824b9a24r1-750-783v2_hq.jpg"
-								}
+								src={"https://wallpaperaccess.com/full/859076.jpg"}
 								width={"100%"}
 								height={"100%"}
-								alt="User profile's picture"
+								alt="User profile's banner"
 							/>
+							<menu className={dftStyles.bannerIconContainer}>
+								<li key="author-menu">
+									<>
+										<IconButton
+											classes={{
+												root: dftStyles.bannerIcon,
+											}}
+											aria-label={"Author's menu"}
+											aria-controls={
+												isAuthorMenuOpen ? "author-menu" : undefined
+											}
+											aria-haspopup={"true"}
+											aria-expanded={isAuthorMenuOpen ? "true" : undefined}
+											onClick={ev => {
+												setAuthorMenuAnchor(ev.currentTarget);
+											}}
+										>
+											<FaCog />
+										</IconButton>
+										{getAuthorDialogMenu(authorMenuAnchor, isAuthorMenuOpen, {
+											closeHandler: closeAuthorDialogMenu,
+											newPublicationHandler: handleNewPublicationClick,
+										})}
+									</>
+								</li>
+							</menu>
 						</div>
-						<div className={dftStyles.userDetailsContainer}>
-							<div className={dftStyles.head}>
-								<h1>{"MENHERA-KUN"}</h1>
-							</div>
-							<div className={dftStyles.body}>
-								<p>
-									{
-										"THE NAME IS MENHERA, I'M 18. RIGHT NOW I'M TRYING TO GET THIS WEB PAGE TOGETHER AND MAKE IT WORK FLAWLESSLY ON MOBILE DEVICES."
+						<div className={dftStyles.content}>
+							<div className={dftStyles.userPictureContainer}>
+								<img
+									src={
+										"https://pm1.narvii.com/7700/9900de90d3598fd01f7b009aefed860e824b9a24r1-750-783v2_hq.jpg"
 									}
-								</p>
+									width={"100%"}
+									height={"100%"}
+									alt="User profile's picture"
+								/>
+							</div>
+							<div className={dftStyles.userDetailsContainer}>
+								<div className={dftStyles.head}>
+									<h1>{"MENHERA-KUN"}</h1>
+								</div>
+								<div className={dftStyles.body}>
+									<p>
+										{
+											"THE NAME IS MENHERA, I'M 18. RIGHT NOW I'M TRYING TO GET THIS WEB PAGE TOGETHER AND MAKE IT WORK FLAWLESSLY ON MOBILE DEVICES."
+										}
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
+
+					<Divider />
+
+					<div className={dftStyles.tabsContainer}>
+						<Tabs
+							value={currentTab}
+							onChange={handleTabChange}
+							variant="scrollable"
+							scrollButtons="auto"
+							allowScrollButtonsMobile
+							aria-label="Scrollable tabs to view author generated data, like publications or colabs."
+							classes={{
+								indicator: dftStyles.tabsIndicator,
+							}}
+						>
+							<Tab label="Artigos" />
+							<Tab label="Colaborações" />
+							<Tab label="Artigos Armazenados *" />
+						</Tabs>
+					</div>
 				</div>
 
-				<Divider />
-
-				<div className={dftStyles.tabsContainer}>
-					<Tabs
-						value={currentTab}
-						onChange={handleTabChange}
-						variant="scrollable"
-						scrollButtons="auto"
-						allowScrollButtonsMobile
-						aria-label="Scrollable tabs to view author generated data, like publications or colabs."
-						classes={{
-							indicator: dftStyles.tabsIndicator,
-						}}
-					>
-						<Tab label="Artigos" />
-						<Tab label="Colaborações" />
-						<Tab label="Artigos Armazenados *" />
-					</Tabs>
-				</div>
 				<div className={dftStyles.tabPanel}>{currentPanel || customPanel}</div>
 			</div>
 		</main>

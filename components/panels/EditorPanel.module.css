@@ -3,7 +3,7 @@
 }
 
 .editorContainer {
-	@apply flex flex-col gap-4 p-4;
+	@apply flex flex-col gap-4;
 }
 
 .editorContainer .actions {
@@ -14,4 +14,37 @@
 	@apply border-clr-secondary text-clr-secondary;
 	@apply hover:border-clr-accent hover:text-clr-accent !important;
 	@apply active:border-clr-accent active:text-clr-accent !important;
+}
+
+/* Preview Modal */
+.muiModal {
+	@apply flex justify-center items-center;
+}
+
+.previewModalContainer {
+	@apply w-fit;
+}
+
+.previewModalContainer hr {
+	@apply bg-clr-secondary;
+}
+
+.modalContent {
+	@apply flex flex-col gap-4;
+	@apply max-w-screen-md w-full p-4;
+	@apply border rounded-sm border-none;
+	@apply bg-clr-primary;
+}
+
+.modalContent .head {
+	@apply flex items-center justify-between;
+}
+
+.modalContent .head .buttons {
+	@apply flex gap-4 bg-clr-secondary bg-opacity-5 rounded;
+}
+
+.modalContent .head .buttons svg {
+	@apply hover:fill-clr-accent;
+	@apply active:fill-clr-accent;
 }
