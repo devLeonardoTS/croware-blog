@@ -1,0 +1,50 @@
+.control:hover .inputOutlined {
+	@apply border-clr-info;
+}
+.control:hover .label {
+	@apply text-clr-info;
+}
+.control:hover * {
+	filter: brightness(1.25);
+}
+.control * {
+	background: none;
+}
+
+.input {
+	@apply text-clr-secondary border-2 border-clr-secondary;
+}
+
+.inputOutlined {
+	@apply border-clr-secondary;
+}
+.inputOutlined * {
+	border-width: 0 !important;
+}
+
+.inputOnError fieldset {
+	@apply border-clr-error !important;
+}
+
+.inputOnFocus * {
+	@apply text-clr-secondary border-2 border-clr-secondary;
+	box-shadow: none !important;
+}
+
+.label {
+	@apply text-clr-secondary;
+}
+
+.labelOnError {
+	@apply text-clr-error !important;
+}
+
+/* .labelOnFocus {
+} */
+
+.helper {
+	@apply text-clr-secondary;
+}
+
+/* .helperOnError {
+} */

@@ -1,7 +1,10 @@
-import { Button, Divider, IconButton, Modal } from "@mui/material";
+import { Button, Divider, IconButton, Modal, TextField } from "@mui/material";
+import { useFormik } from "formik";
 import dynamic from "next/dynamic";
 import { ReactNode, useState } from "react";
 import { IoClose } from "react-icons/io5";
+import * as Yup from "yup";
+import OwnOutlinedField from "../forms/OwnOutlinedField";
 import dftStyles from "./EditorPanel.module.css";
 
 type EditorPanelProps = {};
@@ -71,6 +74,16 @@ const EditorPanel = ({}: EditorPanelProps) => {
 		setModal(element);
 	};
 
+	const formik = useFormik({
+		initialValues: {
+			title: "",
+		},
+		onSubmit: (values, helpers) => {},
+		validationSchema: Yup.object({
+			title: Yup.string(),
+		}),
+	});
+
 	return (
 		<div className={dftStyles.container}>
 			<div className={dftStyles.editorContainer}>
@@ -79,7 +92,18 @@ const EditorPanel = ({}: EditorPanelProps) => {
 				</div>
 
 				<div className={dftStyles.body}>
-					<div className={dftStyles.form}>
+					<form className={dftStyles.form} onSubmit={formik.handleSubmit}>
+						<OwnOutlinedField
+							type="text"
+							id="pub-title"
+							name="title"
+							label="Título"
+							onChange={formik.handleChange}
+							value={formik.values.title}
+							variant="outlined"
+							helperText="I'm trying to make this work for more than 6 hours! Welp!"
+							error
+						/>
 						<p>title</p>
 						<p>picture</p>
 						<p>slug</p>
@@ -89,7 +113,7 @@ const EditorPanel = ({}: EditorPanelProps) => {
 						<p>hashtags</p>
 						<p>author</p>
 						<p>colaborators</p>
-					</div>
+					</form>
 					<div className={dftStyles.editor}>
 						<OwnCkEditor
 							value={editorContent}

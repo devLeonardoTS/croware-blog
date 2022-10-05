@@ -444,3 +444,7 @@
 .ck-content menu {
 	all: revert;
 }
+
+.ck-content .table table {
+	border-style: hidden;
+}
