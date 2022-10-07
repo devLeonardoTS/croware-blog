@@ -2,21 +2,53 @@
 	@apply flex flex-col gap-4;
 }
 
-.editorContainer {
+.contentContainer {
 	@apply flex flex-col gap-4;
 }
 
-.editorContainer .actions {
-	@apply flex gap-2 justify-end;
+.contentContainer .head {
+	@apply mx-4;
 }
 
-.editorContainer .actions :global(.MuiButton-root) {
+.contentContainer .body {
+	@apply flex flex-col gap-4;
+}
+
+.contentContainer .actions {
+	@apply flex gap-2 justify-end px-4;
+}
+
+.contentContainer .actions :global(.MuiButton-root) {
 	@apply border-clr-secondary text-clr-secondary;
 	@apply hover:border-clr-accent hover:text-clr-accent !important;
 	@apply active:border-clr-accent active:text-clr-accent !important;
 }
 
-/* Preview Modal */
+.contentContainer .editor {
+	@apply px-4;
+}
+
+/* Form new pub */
+.form {
+	@apply flex flex-col px-4 gap-4;
+}
+.form .inputGroup {
+	@apply flex flex-wrap gap-4;
+}
+
+.form .field {
+	@apply w-full;
+}
+
+.form .fieldsRow {
+	@apply flex w-full gap-2;
+}
+
+.form .imageInput {
+	@apply max-h-[180px];
+}
+
+/* Modal new pub preview */
 .muiModal {
 	@apply flex justify-center items-center;
 }
@@ -37,7 +69,7 @@
 }
 
 .modalContent .head {
-	@apply flex items-center justify-between;
+	@apply flex items-center justify-between gap-4;
 }
 
 .modalContent .head .buttons {

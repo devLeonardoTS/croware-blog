@@ -1,0 +1,21 @@
+.formControl {
+	@apply rounded overflow-hidden;
+}
+.formControl button {
+	@apply p-0 h-full w-full;
+}
+.formControl figure {
+	@apply relative;
+}
+
+.formControl legend {
+	@apply absolute p-1 top-0 left-0 bg-clr-primary bg-opacity-80 h-full;
+	writing-mode: vertical-lr;
+	text-orientation: mixed;
+	letter-spacing: 0.25em;
+	transform: rotate(180deg);
+}
+
+.formControl figure img {
+	@apply aspect-video object-cover object-center;
+}

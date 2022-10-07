@@ -8,6 +8,13 @@ const OwnOutlinedField = (props: TextFieldProps) => {
 			variant="outlined"
 			size="small"
 			className={dftStyles.control}
+			SelectProps={{
+				MenuProps: {
+					PopoverClasses: {
+						root: dftStyles.selectMenuPopover,
+					},
+				},
+			}}
 			InputLabelProps={{
 				classes: {
 					outlined: dftStyles.label,
@@ -29,7 +36,9 @@ const OwnOutlinedField = (props: TextFieldProps) => {
 					error: dftStyles.helperOnError,
 				},
 			}}
-		/>
+		>
+			{props.children}
+		</TextField>
 	);
 };
 

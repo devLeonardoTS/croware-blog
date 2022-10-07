@@ -7,12 +7,16 @@
 .control:hover * {
 	filter: brightness(1.25);
 }
+.control svg {
+	border: none;
+}
 .control * {
 	background: none;
 }
 
 .input {
 	@apply text-clr-secondary border-2 border-clr-secondary;
+	@apply text-ellipsis;
 }
 
 .inputOutlined {
@@ -30,9 +34,12 @@
 	@apply text-clr-secondary border-2 border-clr-secondary;
 	box-shadow: none !important;
 }
+.inputOnFocus span {
+	border: none;
+}
 
 .label {
-	@apply text-clr-secondary;
+	@apply text-clr-secondary text-opacity-50 px-[2px];
 }
 
 .labelOnError {
@@ -48,3 +55,7 @@
 
 /* .helperOnError {
 } */
+
+.selectMenuPopover * {
+	@apply text-clr-primary;
+}

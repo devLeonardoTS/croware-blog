@@ -1,10 +1,19 @@
-import { Button, Divider, IconButton, Modal, TextField } from "@mui/material";
-import { useFormik } from "formik";
+import {
+	Button,
+	Divider,
+	IconButton,
+	MenuItem,
+	Modal,
+	TextField,
+} from "@mui/material";
+import { FormikHelpers, useFormik } from "formik";
 import dynamic from "next/dynamic";
 import { ReactNode, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import * as Yup from "yup";
+import OwnImageInput from "../forms/OwnImageInput";
 import OwnOutlinedField from "../forms/OwnOutlinedField";
+import OwnSelectField from "../forms/OwnSelectField";
 import dftStyles from "./EditorPanel.module.css";
 
 type EditorPanelProps = {};
@@ -12,6 +21,17 @@ type EditorPanelProps = {};
 type ViewPublicationModalProps = {
 	editorContent: string;
 	closeHandler: () => void;
+};
+
+type NewPublicationType = {
+	title: string;
+	excerpt: string;
+	category: string;
+	author: string;
+	hashtags: string[];
+	colaborators: string[];
+	content: string;
+	thumbnail?: File;
 };
 
 const OwnCkEditor = dynamic(
@@ -24,6 +44,27 @@ const OwnCkEditor = dynamic(
 		loading: () => <div>Loading the editor...</div>,
 	}
 );
+
+const newPubInit: NewPublicationType = {
+	title: "",
+	excerpt: "",
+	category: "",
+	author: "",
+	hashtags: [],
+	colaborators: [],
+	content: "",
+	thumbnail: undefined,
+};
+const newPubOnSubmit = (
+	values: NewPublicationType,
+	helpers: FormikHelpers<NewPublicationType>
+) => {
+	console.log("Submitted values:", values);
+};
+
+const newPubValidationSchema = Yup.object({
+	title: Yup.string(),
+});
 
 const ViewPublicationModal = ({
 	editorContent,
@@ -74,63 +115,147 @@ const EditorPanel = ({}: EditorPanelProps) => {
 		setModal(element);
 	};
 
-	const formik = useFormik({
-		initialValues: {
-			title: "",
-		},
-		onSubmit: (values, helpers) => {},
-		validationSchema: Yup.object({
-			title: Yup.string(),
-		}),
+	const formik = useFormik<NewPublicationType>({
+		initialValues: newPubInit,
+		onSubmit: newPubOnSubmit,
+		validationSchema: newPubValidationSchema,
 	});
 
 	return (
 		<div className={dftStyles.container}>
-			<div className={dftStyles.editorContainer}>
+			<div className={dftStyles.contentContainer}>
 				<div className={dftStyles.head}>
 					<h2>NOVA PUBLICAÇÃO</h2>
 				</div>
 
 				<div className={dftStyles.body}>
-					<form className={dftStyles.form} onSubmit={formik.handleSubmit}>
-						<OwnOutlinedField
-							type="text"
-							id="pub-title"
-							name="title"
-							label="Título"
-							onChange={formik.handleChange}
-							value={formik.values.title}
-							variant="outlined"
-							helperText="I'm trying to make this work for more than 6 hours! Welp!"
-							error
-						/>
-						<p>title</p>
-						<p>picture</p>
-						<p>slug</p>
-						<p>excerpt</p>
-						<p>content</p>
-						<p>category</p>
-						<p>hashtags</p>
-						<p>author</p>
-						<p>colaborators</p>
+					<form className={dftStyles.form}>
+						<div className={dftStyles.inputGroup}>
+							<div className={dftStyles.fieldsRow}>
+								<OwnImageInput
+									name="thumbnail"
+									file={formik.values.thumbnail}
+									inputProps={{
+										onChange: ev => {
+											const file = ev.target.files?.[0];
+											formik.setFieldValue("thumbnail", file);
+										},
+									}}
+									controlClasses={dftStyles.imageInput}
+									legend="Thumbnail"
+								/>
+							</div>
+							<OwnOutlinedField
+								type="text"
+								id="new-pub-title"
+								label="Título"
+								variant="outlined"
+								classes={{
+									root: dftStyles.field,
+								}}
+								{...formik.getFieldProps("title")}
+							/>
+							<OwnOutlinedField
+								type="text"
+								id="new-pub-excerpt"
+								label="Resumo"
+								variant="outlined"
+								classes={{
+									root: dftStyles.field,
+								}}
+								{...formik.getFieldProps("excerpt")}
+							/>
+
+							<div className={dftStyles.fieldsRow}>
+								{/* <OwnSelectField
+									label="Hashtags"
+									formControlProps={{
+										variant: "outlined",
+									}}
+									selectProps={{
+										...formik.getFieldProps("hashtags"),
+										id: "new-pub-hashtags",
+										multiple: true,
+									}}
+								>
+									<MenuItem
+										onClick={() => formik.setFieldValue("hashtags", [])}
+									></MenuItem>
+									<MenuItem value="Curiosidade">Curiosidade</MenuItem>
+									<MenuItem value="Evento">Evento</MenuItem>
+								</OwnSelectField> */}
+
+								<OwnOutlinedField
+									type="text"
+									id="new-pub-hashtags"
+									label="Hashtags"
+									variant="outlined"
+									classes={{
+										root: dftStyles.field,
+									}}
+									{...formik.getFieldProps("hashtags")}
+								/>
+							</div>
+
+							<div className={dftStyles.fieldsRow}>
+								<OwnSelectField
+									label="Categoria"
+									formControlProps={{
+										variant: "outlined",
+									}}
+									selectProps={{
+										...formik.getFieldProps("category"),
+										id: "new-pub-category",
+									}}
+								>
+									<MenuItem
+										onClick={() => formik.setFieldValue("category", "")}
+									></MenuItem>
+									<MenuItem value="Tecnologia">Tecnologia</MenuItem>
+									<MenuItem value="Evento">Evento</MenuItem>
+								</OwnSelectField>
+
+								<OwnSelectField
+									label="Colaboradores"
+									formControlProps={{
+										variant: "outlined",
+									}}
+									selectProps={{
+										...formik.getFieldProps("colaborators"),
+										id: "new-pub-colaborators",
+										multiple: true,
+									}}
+								>
+									<MenuItem
+										onClick={() => formik.setFieldValue("colaborators", [])}
+									></MenuItem>
+									<MenuItem value="Riko">Riko</MenuItem>
+									<MenuItem value="Reg">Reg</MenuItem>
+									<MenuItem value="Nanachi">Nanachi</MenuItem>
+								</OwnSelectField>
+							</div>
+						</div>
 					</form>
 					<div className={dftStyles.editor}>
 						<OwnCkEditor
-							value={editorContent}
 							name="editor"
 							onChange={(data: any) => {
-								setEditorContent(data);
+								// setEditorContent(data);
+								formik.setFieldValue("content", data);
 							}}
+							value={formik.values.content}
 						/>
 					</div>
 				</div>
 				<div className={dftStyles.actions}>
-					<Button variant="outlined">Salvar</Button>
+					<Button variant="outlined" onClick={() => formik.handleSubmit()}>
+						Salvar
+					</Button>
 					<Button
 						onClick={() =>
 							handleOpenModal(
 								<ViewPublicationModal
-									editorContent={editorContent}
+									editorContent={formik.values.content}
 									closeHandler={handleCloseModal}
 								/>
 							)

@@ -1,0 +1,65 @@
+.control {
+	@apply w-full;
+	@apply text-clr-secondary;
+	@apply text-ellipsis;
+}
+.control:hover * {
+	@apply border-clr-info text-clr-info !important;
+	filter: brightness(1.25);
+}
+.control:hover * svg {
+	@apply fill-clr-info !important;
+}
+
+.control fieldset {
+	@apply border-clr-secondary;
+}
+
+.label {
+	@apply text-clr-secondary text-opacity-50 px-1 max-w-[70%];
+}
+
+.labelOnError ~ .select svg {
+	@apply fill-clr-error;
+}
+
+.labelOnFocus,
+.labelFilled {
+	@apply max-w-full;
+}
+
+.select {
+	@apply text-clr-secondary;
+}
+
+.selectMenuList {
+	@apply text-clr-primary max-h-[25vh];
+}
+
+.selectMenuList li {
+	@apply min-h-[36px] hover:bg-clr-info hover:bg-opacity-50;
+}
+
+.selectMenuList li:focus {
+	background-color: transparent;
+}
+
+.selectMenuList li:hover {
+	@apply bg-clr-info bg-opacity-50 !important;
+}
+
+.selectMenuList li *:hover {
+	@apply bg-clr-info bg-opacity-50;
+}
+
+.selectMenuList li[aria-selected="true"] {
+	@apply bg-clr-info hover:bg-clr-info hover:bg-opacity-50;
+}
+
+.helperText {
+	@apply text-clr-secondary;
+}
+
+.helperTextOnError {
+	@apply text-clr-error;
+}

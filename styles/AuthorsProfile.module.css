@@ -64,7 +64,7 @@
 	@apply absolute h-[120px] overflow-hidden;
 	@apply border-[4px] rounded-full;
 	@apply bottom-[0px];
-	@apply object-cover object-center;
+	@apply object-fill object-center;
 }
 
 .profileContainer .content .userDetailsContainer {
@@ -79,6 +79,10 @@
 .tabsContainer {
 	@apply flex gap-4 overflow-hidden;
 	@apply bg-clr-primary;
+}
+
+.tabsContainer * {
+	@apply min-w-0 !important;
 }
 
 .tabsContainer button {

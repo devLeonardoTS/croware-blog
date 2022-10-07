@@ -1,17 +1,43 @@
-.perfil
-{
-    margin: auto;
-    background-color: rgba(0, 0, 0, 0.36);
-    text-align: center;
-    width: 450px;
-    height: 350px;
-    border-radius: 5px;
+.main {
+	min-width: 200px;
+	max-width: 1000px;
+	margin: auto;
 }
-.rodelaimg
-{
-   width: 100px;
-   height: 100px;
-   background-color: rgba(0, 0, 0, 0.823);
-   border-radius: 50%;
-   margin: 20px;
+
+.profileContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+	margin: 24px 0;
+}
+
+.perfil {
+	width: 400px;
+	position: relative;
+	padding: 24px;
+}
+.perfil img {
+	float: left;
+	height: 180px;
+	margin-right: 16px;
+	margin-bottom: 16px;
+	border-radius: 4px;
+}
+.perfil h2 {
+	margin-bottom: 16px;
+}
+.perfil .context {
+	background-color: black;
+	width: 100%;
+	height: 100%;
+	padding-top: 16px;
+	padding-left: 16px;
+	padding-right: 16px;
+	margin-top: 16px;
+	margin-left: 16px;
+	border-radius: 4px;
+}
+
+.sobre {
 }
