@@ -1,14 +1,16 @@
 import {
 	Button,
 	Divider,
+	FormHelperText,
 	IconButton,
 	MenuItem,
 	Modal,
 	TextField,
 } from "@mui/material";
-import { FormikHelpers, useFormik } from "formik";
+import { Formik, FormikHelpers, useFormik } from "formik";
+import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import * as Yup from "yup";
 import OwnImageInput from "../forms/OwnImageInput";
@@ -28,7 +30,8 @@ type NewPublicationType = {
 	excerpt: string;
 	category: string;
 	author: string;
-	hashtags: string[];
+	hashtags: string;
+	hashtagsArr: string[];
 	colaborators: string[];
 	content: string;
 	thumbnail?: File;
@@ -45,12 +48,38 @@ const OwnCkEditor = dynamic(
 	}
 );
 
+type HashtagsListProps = {
+	hashtags?: string[];
+	rmvTag: (tag: string) => Promise<void>;
+};
+
+const HashtagsList = ({ hashtags, rmvTag }: HashtagsListProps) => {
+	return (
+		<div className={dftStyles.hashtagsContainer}>
+			<ul className={dftStyles.hashtagList}>
+				{hashtags?.map(tag => (
+					<li
+						key={nanoid()}
+						className={dftStyles.hashtag}
+						onClick={() => rmvTag(tag)}
+					>
+						<p>
+							<small>{tag}</small>
+						</p>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+};
+
 const newPubInit: NewPublicationType = {
 	title: "",
 	excerpt: "",
 	category: "",
 	author: "",
-	hashtags: [],
+	hashtags: "",
+	hashtagsArr: [],
 	colaborators: [],
 	content: "",
 	thumbnail: undefined,
@@ -64,6 +93,12 @@ const newPubOnSubmit = (
 
 const newPubValidationSchema = Yup.object({
 	title: Yup.string(),
+	hashtagsArr: Yup.array(
+		Yup.string()
+			.trim()
+			.min(1, m => `Uma hashtag está vazia.`)
+			.max(5, m => `A hashtag "${m.value}" passa de ${m.max} caracteres`)
+	).nullable(),
 });
 
 const ViewPublicationModal = ({
@@ -121,6 +156,27 @@ const EditorPanel = ({}: EditorPanelProps) => {
 		validationSchema: newPubValidationSchema,
 	});
 
+	const handleHashtagsHelperTxt = () => {
+		const hasValue = Boolean(formik.values?.hashtags);
+		const hasError = Boolean(formik.errors?.hashtagsArr);
+		if (hasError) {
+			const errors = formik?.errors?.hashtagsArr;
+			if (typeof errors === "string") {
+				return (<sub>{errors}</sub>) as ReactNode;
+			}
+			if (Array.isArray(errors)) {
+				return (<sub>{errors.at(-1)}</sub>) as ReactNode;
+			}
+		} else {
+			return (<sub>{"Separe as tags com vírgulas"}</sub>) as ReactNode;
+		}
+	};
+
+	useEffect(() => {
+		console.log("hashtagsArr", formik.values.hashtagsArr);
+		console.log("Any error?", formik.errors.hashtagsArr);
+	}, [formik]);
+
 	return (
 		<div className={dftStyles.container}>
 			<div className={dftStyles.contentContainer}>
@@ -167,34 +223,62 @@ const EditorPanel = ({}: EditorPanelProps) => {
 							/>
 
 							<div className={dftStyles.fieldsRow}>
-								{/* <OwnSelectField
-									label="Hashtags"
-									formControlProps={{
-										variant: "outlined",
-									}}
-									selectProps={{
-										...formik.getFieldProps("hashtags"),
-										id: "new-pub-hashtags",
-										multiple: true,
-									}}
-								>
-									<MenuItem
-										onClick={() => formik.setFieldValue("hashtags", [])}
-									></MenuItem>
-									<MenuItem value="Curiosidade">Curiosidade</MenuItem>
-									<MenuItem value="Evento">Evento</MenuItem>
-								</OwnSelectField> */}
-
-								<OwnOutlinedField
-									type="text"
-									id="new-pub-hashtags"
-									label="Hashtags"
-									variant="outlined"
-									classes={{
-										root: dftStyles.field,
-									}}
-									{...formik.getFieldProps("hashtags")}
-								/>
+								<div className={dftStyles.hashtagsField}>
+									<OwnOutlinedField
+										type="text"
+										id="new-pub-hashtags"
+										label="Hashtags"
+										variant="outlined"
+										classes={{
+											root: dftStyles.field,
+										}}
+										{...formik.getFieldProps("hashtags")}
+										onChange={async ev => {
+											const value = ev.target.value;
+											const isLastKeyAComma = value?.at(-1) === ",";
+											if (isLastKeyAComma) {
+												const hashtagsArr = formik.values.hashtagsArr;
+												const newHashtag = value.replaceAll(",", "").trim();
+												if (newHashtag) {
+													await formik.setFieldValue("hashtagsArr", [
+														...hashtagsArr,
+														newHashtag,
+													]);
+												}
+												await formik.setFieldValue("hashtags", "");
+												return;
+											}
+											// console.log(value?.at(-1) === ",");
+											await formik.setFieldValue("hashtags", value);
+										}}
+										// helperText={handleHashtagsHelperTxt()}
+										error={
+											(formik.errors?.hashtagsArr as Array<string>)?.length > 0
+										}
+									/>
+									<HashtagsList
+										hashtags={formik.values.hashtagsArr}
+										rmvTag={async tag => {
+											const hashtagsArr = formik.values.hashtagsArr;
+											const withoutSelectedTag = hashtagsArr.filter(
+												item => item !== tag
+											);
+											await formik.setFieldValue(
+												"hashtagsArr",
+												withoutSelectedTag
+											);
+										}}
+									/>
+									<p
+										className={
+											(formik.errors.hashtagsArr as Array<string>)?.length > 0
+												? dftStyles.fieldOnError
+												: "px-4"
+										}
+									>
+										{handleHashtagsHelperTxt()}
+									</p>
+								</div>
 							</div>
 
 							<div className={dftStyles.fieldsRow}>
@@ -241,7 +325,7 @@ const EditorPanel = ({}: EditorPanelProps) => {
 							name="editor"
 							onChange={(data: any) => {
 								// setEditorContent(data);
-								formik.setFieldValue("content", data);
+								formik.setFieldValue("content", data, false);
 							}}
 							value={formik.values.content}
 						/>

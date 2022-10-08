@@ -64,7 +64,7 @@
 	@apply absolute h-[120px] overflow-hidden;
 	@apply border-[4px] rounded-full;
 	@apply bottom-[0px];
-	@apply object-fill object-center;
+	@apply object-cover object-center;
 }
 
 .profileContainer .content .userDetailsContainer {

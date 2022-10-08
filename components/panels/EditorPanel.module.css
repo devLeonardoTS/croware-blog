@@ -45,7 +45,27 @@
 }
 
 .form .imageInput {
-	@apply max-h-[180px];
+	@apply aspect-video m-auto max-w-[400px];
+}
+
+.form .hashtagsField {
+	@apply flex flex-col gap-4 w-full;
+}
+
+.form .fieldOnError * {
+	@apply px-4 text-clr-error;
+}
+
+/* Hashtags List */
+
+.hashtagsContainer {
+	@apply border border-clr-secondary rounded p-2 px-4;
+	@apply overflow-hidden;
+}
+.hashtagList {
+	@apply flex flex-wrap gap-2;
+}
+.hashtag {
 }
 
 /* Modal new pub preview */

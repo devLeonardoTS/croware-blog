@@ -61,7 +61,11 @@ const OwnImageInput = ({
 							alt={imageProps?.alt || legend}
 							{...imageProps}
 						/>
-						{legend && <legend>{legend}</legend>}
+						{legend && (
+							<legend>
+								<span>{legend}</span>
+							</legend>
+						)}
 					</figure>
 				</label>
 			</Button>

@@ -90,6 +90,9 @@ const configs = () => {
 		toolbar: {
 			shouldNotGroupWhenFull: true,
 		},
+		mediaEmbed: {
+			previewsInData: true,
+		},
 		image: {
 			styles: ["alignLeft", "alignCenter", "alignRight"],
 			resizeOptions: [

@@ -1,21 +1,30 @@
 .formControl {
-	@apply rounded overflow-hidden;
+	@apply rounded overflow-hidden w-full;
 }
 .formControl button {
 	@apply p-0 h-full w-full;
 }
+.formControl label {
+	@apply h-full w-full;
+}
+
 .formControl figure {
-	@apply relative;
+	@apply h-full w-full;
+}
+
+.formControl figure img {
+	@apply h-full w-full object-cover object-center;
 }
 
 .formControl legend {
-	@apply absolute p-1 top-0 left-0 bg-clr-primary bg-opacity-80 h-full;
+	@apply flex p-1 h-full;
+	@apply absolute top-0 left-0;
+	@apply bg-clr-primary bg-opacity-80;
+	@apply items-center;
+}
+.formControl legend span {
 	writing-mode: vertical-lr;
 	text-orientation: mixed;
 	letter-spacing: 0.25em;
 	transform: rotate(180deg);
-}
-
-.formControl figure img {
-	@apply aspect-video object-cover object-center;
 }
