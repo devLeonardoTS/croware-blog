@@ -1,0 +1,5 @@
+.button {
+	@apply border-clr-secondary text-clr-secondary;
+	@apply hover:border-clr-accent hover:text-clr-accent !important;
+	@apply active:border-clr-accent active:text-clr-accent !important;
+}

@@ -1,7 +1,7 @@
 import { TextField, TextFieldProps } from "@mui/material";
-import dftStyles from "./OwnOutlinedField.module.css";
+import dftStyles from "./OutlinedField.module.css";
 
-const OwnOutlinedField = (props: TextFieldProps) => {
+const OutlinedField = (props: TextFieldProps) => {
 	return (
 		<TextField
 			{...props}
@@ -42,4 +42,4 @@ const OwnOutlinedField = (props: TextFieldProps) => {
 	);
 };
 
-export default OwnOutlinedField;
+export default OutlinedField;

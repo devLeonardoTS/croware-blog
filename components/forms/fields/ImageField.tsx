@@ -6,16 +6,17 @@ import {
 	HTMLAttributes,
 	ImgHTMLAttributes,
 	InputHTMLAttributes,
+	useEffect,
 	useState,
 } from "react";
-import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
-import dftStyles from "./OwnImageInput.module.css";
+import { IMG_ARTICLE_PLACEHOLDER } from "../../../helpers/constants/assetUrls";
+import dftStyles from "./ImageField.module.css";
 
-type OwnImageInputProps = {
+type ImageFieldProps = {
 	name: string;
 	legend?: string;
 	file?: File;
-	controlClasses?: string;
+	controlStyles?: string;
 	figureProps?: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
 	imageProps?: DetailedHTMLProps<
 		ImgHTMLAttributes<HTMLImageElement>,
@@ -27,30 +28,34 @@ type OwnImageInputProps = {
 	>;
 };
 
-const OwnImageInput = ({
+const ImageField = ({
 	name,
 	legend,
 	file,
-	controlClasses,
+	controlStyles,
 	figureProps,
 	imageProps,
 	inputProps,
-}: OwnImageInputProps) => {
+}: ImageFieldProps) => {
 	const [inputId, setInputId] = useState(nanoid());
 	const [preview, setPreview] = useState<any>();
 
-	if (file) {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => {
-			setPreview(reader.result);
-		};
-	}
+	useEffect(() => {
+		if (file) {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				setPreview(reader.result);
+			};
+		} else {
+			setPreview(undefined);
+		}
+	}, [file]);
 
 	return (
 		<div
 			className={`${dftStyles.formControl}${
-				controlClasses ? " " + controlClasses : ""
+				controlStyles ? " " + controlStyles : ""
 			}`}
 		>
 			<Button>
@@ -70,15 +75,15 @@ const OwnImageInput = ({
 				</label>
 			</Button>
 			<input
-				{...inputProps}
 				type="file"
 				name={name}
 				id={inputId}
 				accept="image/*"
 				hidden
+				{...inputProps}
 			/>
 		</div>
 	);
 };
 
-export default OwnImageInput;
+export default ImageField;

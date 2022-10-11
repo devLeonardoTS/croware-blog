@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import { nanoid } from "nanoid";
 import { ReactNode, useState } from "react";
-import dftStyles from "./OwnSelectField.module.css";
+import dftStyles from "./SelectField.module.css";
 
-type OwnSelectFieldProps = {
+type SelectFieldProps = {
 	label: string;
 	error?: boolean;
 	helperTxt?: string;
@@ -21,7 +21,7 @@ type OwnSelectFieldProps = {
 	selectProps?: SelectProps;
 };
 
-const OwnSelectField = ({
+const SelectField = ({
 	label,
 	error,
 	helperTxt,
@@ -29,7 +29,7 @@ const OwnSelectField = ({
 	formControlProps,
 	inputLabelProps,
 	selectProps,
-}: OwnSelectFieldProps) => {
+}: SelectFieldProps) => {
 	const [labelId, setLabelId] = useState(nanoid());
 
 	return (
@@ -67,16 +67,18 @@ const OwnSelectField = ({
 			>
 				{children}
 			</Select>
-			<FormHelperText
-				classes={{
-					root: dftStyles.helperText,
-					error: dftStyles.helperTextOnError,
-				}}
-			>
-				{helperTxt}
-			</FormHelperText>
+			{helperTxt && (
+				<FormHelperText
+					classes={{
+						root: dftStyles.helperText,
+						error: dftStyles.helperTextOnError,
+					}}
+				>
+					{helperTxt}
+				</FormHelperText>
+			)}
 		</FormControl>
 	);
 };
 
-export default OwnSelectField;
+export default SelectField;

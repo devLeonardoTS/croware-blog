@@ -1,0 +1,31 @@
+.modal {
+	@apply flex justify-center items-center;
+}
+
+.container hr {
+	@apply bg-clr-secondary;
+}
+
+.content {
+	@apply flex flex-col gap-4;
+	@apply max-w-screen-md w-full p-4;
+	@apply border rounded-sm border-none;
+	@apply bg-clr-primary;
+}
+
+.content .head {
+	@apply flex items-center justify-between gap-4;
+}
+
+.content .head .buttons {
+	@apply flex gap-4 bg-clr-secondary bg-opacity-5 rounded;
+}
+
+.content .head .buttons svg {
+	@apply hover:fill-clr-accent;
+	@apply active:fill-clr-accent;
+}
+
+.container .content .body figure * {
+	border-style: none;
+}

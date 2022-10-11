@@ -1,3 +1,6 @@
+.control {
+	@apply w-full;
+}
 .control:hover .inputOutlined {
 	@apply border-clr-info;
 }
