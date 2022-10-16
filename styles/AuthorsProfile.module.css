@@ -38,18 +38,6 @@
 	@apply active:fill-clr-accent;
 }
 
-.dialogMenu {
-	@apply bg-clr-primary bg-opacity-95;
-}
-
-.dialogMenu li {
-	@apply flex gap-2;
-}
-
-.dialogMenu hr {
-	@apply border-clr-secondary border-opacity-50;
-}
-
 .profileContainer .content {
 	@apply flex flex-col gap-4;
 }

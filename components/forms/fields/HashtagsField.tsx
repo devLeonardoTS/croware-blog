@@ -8,8 +8,8 @@ import OutlinedField from "./OutlinedField";
 
 type HashtagsFieldProps = {
 	inputProps: TextFieldProps;
-	hashtagList: HashtagType[];
-	removeHashtag: (id: string) => void | Promise<void>;
+	removeHashtag?: (id: string) => void | Promise<void>;
+	hashtagList?: HashtagType[];
 	helperText?: ReactNode;
 	error?: boolean;
 };
@@ -24,7 +24,7 @@ const HashtagsField = ({
 	const getHashtagList = () => {
 		return (
 			<ul className={dftStyles.hashtagList}>
-				{hashtagList.map(hashtag => {
+				{hashtagList?.map(hashtag => {
 					return (
 						<li key={nanoid()} className={dftStyles.hashtagContainer}>
 							<div className={dftStyles.hashtag}>
@@ -35,7 +35,9 @@ const HashtagsField = ({
 								</div>
 								<IconButton
 									onClick={() => {
-										removeHashtag(hashtag.id);
+										if (removeHashtag) {
+											removeHashtag(hashtag.id);
+										}
 									}}
 									className={dftStyles.btnClose}
 								>
@@ -53,7 +55,7 @@ const HashtagsField = ({
 		<div className={dftStyles.container} {...(error && { "data-error": true })}>
 			<OutlinedField error={error} {...inputProps} />
 			<div className={dftStyles.listContainer}>
-				{hashtagList.length > 0 && getHashtagList()}
+				{hashtagList && hashtagList.length > 0 && getHashtagList()}
 				<p className={dftStyles.helperText}>
 					<small>{helperText}</small>
 				</p>

@@ -14,7 +14,7 @@ import dftStyles from "./SelectField.module.css";
 type SelectFieldProps = {
 	label: string;
 	error?: boolean;
-	helperTxt?: string;
+	helperText?: ReactNode;
 	children?: ReactNode;
 	formControlProps?: FormControlProps;
 	inputLabelProps?: InputLabelProps;
@@ -24,7 +24,7 @@ type SelectFieldProps = {
 const SelectField = ({
 	label,
 	error,
-	helperTxt,
+	helperText,
 	children,
 	formControlProps,
 	inputLabelProps,
@@ -67,14 +67,14 @@ const SelectField = ({
 			>
 				{children}
 			</Select>
-			{helperTxt && (
+			{helperText && (
 				<FormHelperText
 					classes={{
 						root: dftStyles.helperText,
 						error: dftStyles.helperTextOnError,
 					}}
 				>
-					{helperTxt}
+					{helperText}
 				</FormHelperText>
 			)}
 		</FormControl>

@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { TouchRippleActions } from "@mui/material/ButtonBase/TouchRipple";
 import { nanoid } from "nanoid";
 import {
 	ChangeEventHandler,
@@ -7,6 +8,7 @@ import {
 	ImgHTMLAttributes,
 	InputHTMLAttributes,
 	useEffect,
+	useRef,
 	useState,
 } from "react";
 import { IMG_ARTICLE_PLACEHOLDER } from "../../../helpers/constants/assetUrls";
@@ -39,14 +41,20 @@ const ImageField = ({
 }: ImageFieldProps) => {
 	const [inputId, setInputId] = useState(nanoid());
 	const [preview, setPreview] = useState<any>();
+	const touchRippleRef = useRef<TouchRippleActions>(null);
 
 	useEffect(() => {
+		// if (file) {
+		// 	const reader = new FileReader();
+		// 	reader.readAsDataURL(file);
+		// 	reader.onload = () => {
+		// 		setPreview(reader.result);
+		// 	};
+		// } else {
+		// 	setPreview(undefined);
+		// }
 		if (file) {
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => {
-				setPreview(reader.result);
-			};
+			setPreview(URL.createObjectURL(file));
 		} else {
 			setPreview(undefined);
 		}
@@ -58,7 +66,11 @@ const ImageField = ({
 				controlStyles ? " " + controlStyles : ""
 			}`}
 		>
-			<Button>
+			<Button
+				touchRippleRef={touchRippleRef}
+				onMouseEnter={ev => touchRippleRef.current?.start(ev)}
+				onMouseLeave={ev => touchRippleRef.current?.stop(ev)}
+			>
 				<label htmlFor={inputId}>
 					<figure {...figureProps}>
 						<img

@@ -135,7 +135,7 @@ type OwnCkEditorStyles = {
 
 type OwnCkEditorProps = {
 	name: string;
-	value: string;
+	value?: string;
 	styles?: OwnCkEditorStyles;
 	onReady?: (editor: CustomEditor) => void;
 	onChange?: (event: Event, editor: CustomEditor) => void;
@@ -155,7 +155,7 @@ function OwnCKEditor({ onChange, name, value, styles }: OwnCkEditorProps) {
 				type=""
 				name={name}
 				editor={CustomEditor}
-				data={value}
+				data={value || ""}
 				config={configs()}
 				onReady={editor => {
 					if (!editor) {

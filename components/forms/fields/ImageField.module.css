@@ -9,6 +9,7 @@
 /* Must be full width and height - It contains the figure and image and works to trigger the hidden input for files */
 .formControl label {
 	@apply w-full h-full;
+	@apply hover:cursor-pointer;
 }
 
 .formControl figure {

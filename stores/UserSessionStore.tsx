@@ -1,14 +1,9 @@
 import dayjs from "dayjs";
-import { ReactNode } from "react";
 import create from "zustand";
 import { AUTHENTICATED_USER_LSK } from "../helpers/constants/localStorageKeys";
 import { OwnAxios } from "../helpers/utilities/OwnAxios";
 
 // Types.
-type SessionProviderProps = {
-	children: ReactNode;
-};
-
 type UserCredentials = {
 	identifier: string;
 	password: string;

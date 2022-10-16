@@ -1,19 +1,14 @@
-import { Divider, IconButton, Menu, MenuItem, Tab, Tabs } from "@mui/material";
+import { Divider, IconButton, Tab, Tabs } from "@mui/material";
 import { NextPage } from "next";
-import React, { ReactNode, useState } from "react";
-import { FaCog, FaFeatherAlt, FaUserEdit } from "react-icons/fa";
-import { GoSignOut } from "react-icons/go";
+import React, { ReactNode, useEffect, useState } from "react";
+import { FaCog } from "react-icons/fa";
 
+import AuthorMenuDialog, {
+	AuthorMenuDialogCloseHandler,
+} from "../../components/dialogs/AuthorMenuDialog";
+import ArticleListPanel from "../../components/panels/ArticleListPanel";
 import EditorPanel from "../../components/panels/EditorPanel";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
-
-const ArticleList = () => {
-	return (
-		<div className="p-4">
-			<p>{"Artigos do autor."}</p>
-		</div>
-	);
-};
 
 const ColabsList = () => {
 	return (
@@ -31,95 +26,17 @@ const StoredArticles = () => {
 	);
 };
 
-const panelSelector = (tab: boolean | number) => {
-	switch (tab) {
-		case 0:
-			return ArticleList();
-		case 1:
-			return ColabsList();
-		case 2:
-			return StoredArticles();
-		default:
-			return null;
-	}
-};
-
-const getAuthorDialogMenu = (
-	anchorEl: null | HTMLElement,
-	open: boolean,
-	handlers: {
-		closeHandler: () => void;
-		newPublicationHandler: () => void;
-	}
-) => {
-	return (
-		<Menu
-			id="author-menu"
-			anchorEl={anchorEl}
-			open={open}
-			onClose={handlers.closeHandler}
-			MenuListProps={{
-				"aria-labelledby": "basic-button",
-			}}
-			anchorOrigin={{
-				vertical: "center",
-				horizontal: "left",
-			}}
-			transformOrigin={{
-				vertical: "top",
-				horizontal: "right",
-			}}
-			classes={{
-				paper: dftStyles.dialogMenu,
-			}}
-			disableScrollLock
-		>
-			<MenuItem
-				onClick={() => {
-					handlers.closeHandler();
-					handlers.newPublicationHandler();
-				}}
-			>
-				<FaFeatherAlt />
-				Nova publicação
-			</MenuItem>
-
-			<MenuItem
-				onClick={() => {
-					handlers.closeHandler();
-				}}
-			>
-				<FaUserEdit />
-				Editar perfil
-			</MenuItem>
-
-			<Divider />
-
-			<MenuItem
-				onClick={() => {
-					handlers.closeHandler();
-				}}
-			>
-				<GoSignOut />
-				Sign out
-			</MenuItem>
-		</Menu>
-	);
-};
-
 const Profile: NextPage = () => {
-	const editorState = useState("");
-
 	const [customPanel, setCustomPanel] = useState<ReactNode>(null);
 
 	const [currentTab, setCurrentTab] = useState<boolean | number>(0);
 
-	const [authorMenuAnchor, setAuthorMenuAnchor] = useState<null | HTMLElement>(
-		null
-	);
+	const [authorMenuAnchor, setAuthorMenuAnchor] = useState<
+		HTMLElement | undefined
+	>(undefined);
 	const isAuthorMenuOpen = Boolean(authorMenuAnchor);
-	const closeAuthorDialogMenu = () => {
-		setAuthorMenuAnchor(null);
+	const closeAuthorDialogMenu: AuthorMenuDialogCloseHandler = () => {
+		setAuthorMenuAnchor(undefined);
 	};
 
 	const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -132,7 +49,26 @@ const Profile: NextPage = () => {
 		setCustomPanel(<EditorPanel />);
 	};
 
+	const panelSelector = (tab: boolean | number) => {
+		switch (tab) {
+			case 0:
+				return <ArticleListPanel />;
+			case 1:
+				return ColabsList();
+			case 2:
+				return StoredArticles();
+			default:
+				return null;
+		}
+	};
+
 	const currentPanel = panelSelector(currentTab);
+
+	useEffect(() => {
+		if (customPanel) {
+			setCurrentTab(false);
+		}
+	}, [customPanel]);
 
 	return (
 		<main className={dftStyles.container}>
@@ -165,10 +101,14 @@ const Profile: NextPage = () => {
 										>
 											<FaCog />
 										</IconButton>
-										{getAuthorDialogMenu(authorMenuAnchor, isAuthorMenuOpen, {
-											closeHandler: closeAuthorDialogMenu,
-											newPublicationHandler: handleNewPublicationClick,
-										})}
+										{
+											<AuthorMenuDialog
+												isOpen={isAuthorMenuOpen}
+												onClose={closeAuthorDialogMenu}
+												customPanelSetter={setCustomPanel}
+												anchorEl={authorMenuAnchor}
+											/>
+										}
 									</>
 								</li>
 							</menu>

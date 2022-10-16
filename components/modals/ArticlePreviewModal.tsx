@@ -10,8 +10,8 @@ export type ArticlePreviewCloseHandler = (args?: {
 
 type ArticlePreviewModalProps = {
 	isOpen: boolean;
-	articleContent: string;
 	closeHandler: ArticlePreviewCloseHandler;
+	articleContent?: string;
 };
 
 const ArticlePreviewModal = (props: ArticlePreviewModalProps) => {
