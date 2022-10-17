@@ -5,6 +5,7 @@ import Layout from "../components/Layout";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useTryRefreshUserAuth, useUser } from "../stores/UserSessionStore";
+import { StyledEngineProvider } from "@mui/material";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const user = useUser();
@@ -17,17 +18,19 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	}, [user, tryRefreshUserAuth]);
 
 	return (
-		<Layout>
-			<Head>
-				<title>Croware-Tech Blog</title>
-				<meta
-					name="description"
-					content="Croware-tech Blog - All things digital technology."
-				/>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-			<Component {...pageProps} />
-		</Layout>
+		<StyledEngineProvider injectFirst>
+			<Layout>
+				<Head>
+					<title>Croware-Tech Blog</title>
+					<meta
+						name="description"
+						content="Croware-tech Blog - All things digital technology."
+					/>
+					<link rel="icon" href="/favicon.ico" />
+				</Head>
+				<Component {...pageProps} />
+			</Layout>
+		</StyledEngineProvider>
 	);
 }
 
