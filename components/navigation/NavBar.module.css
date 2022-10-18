@@ -1,0 +1,54 @@
+.container {
+	@apply flex justify-between;
+	@apply mx-6 py-2;
+	@apply min-h-[48px];
+}
+
+.logo {
+	@apply flex items-center min-h-[48px];
+}
+
+.logo .link .image {
+	@apply flex shrink-0 relative;
+}
+
+.logo .link .image span {
+	@apply h-[32px] !important;
+}
+
+.linksGroup {
+	@apply flex justify-end items-center gap-4;
+}
+
+.linksGroup .linksBar {
+	@apply flex items-center gap-4;
+	@apply hidden md:flex;
+}
+
+.linksGroup .linksBar .linksBarItems {
+	@apply text-sm lowercase first-letter:uppercase;
+	@apply hover:text-clr-accent;
+	@apply border-b-2 border-opacity-0 border-transparent;
+	@apply transition-all ease-in-out duration-300;
+}
+
+.linksGroup .linksBar .linksBarItems[data-active="true"] {
+	@apply text-sm lowercase first-letter:uppercase;
+	@apply hover:text-clr-accent;
+	@apply border-b-2 border-opacity-100 border-clr-accent;
+}
+
+.linksGroup .current {
+	@apply border-b-2 border-clr-accent lowercase first-letter:uppercase;
+	@apply hover:text-clr-accent;
+	@apply md:hidden;
+}
+
+.linksGroup .buttons {
+	@apply flex items-center;
+}
+
+.linksGroup .buttons .btnDrawer svg {
+	@apply transition-all ease-in-out duration-300;
+	@apply hover:scale-125 hover:fill-clr-accent;
+}

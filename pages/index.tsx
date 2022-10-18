@@ -1,7 +1,8 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import { SS_MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
+import useNavigationStorage, { mkNavLink } from "../stores/NavigationStorage";
 import dftStyles from "../styles/Home.module.css";
 
 type HomeProps = {
@@ -56,6 +57,11 @@ const Home: NextPage<HomeProps> = ({ articles }) => {
 
 	const articlesList = articles?.data;
 	const articlesMeta = articles?.meta;
+	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
+
+	useEffect(() => {
+		setCurrentNavLink("artigos");
+	}, [setCurrentNavLink]);
 
 	return (
 		<main className={dftStyles.container}>

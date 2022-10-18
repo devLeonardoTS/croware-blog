@@ -7,6 +7,9 @@ import { FaFeatherAlt } from "react-icons/fa";
 import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
 import ownDOMPurify from "../../helpers/ownDOMPurify";
+import useNavigationStorage, {
+	mkNavLink,
+} from "../../stores/NavigationStorage";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
 type ArticlePageProps = {
@@ -37,6 +40,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
 };
 
 const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
+	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
+
 	const artData = article?.data?.[0];
 	const artMeta = article?.meta;
 
@@ -94,6 +99,10 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 			setArticleBody(ownDOMPurify(content.body));
 		}
 	}, [content]);
+
+	useEffect(() => {
+		setCurrentNavLink("artigos");
+	}, [setCurrentNavLink]);
 
 	if (dataError) {
 		return (

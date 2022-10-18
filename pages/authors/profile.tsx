@@ -8,6 +8,9 @@ import AuthorMenuDialog, {
 } from "../../components/dialogs/AuthorMenuDialog";
 import ArticleListPanel from "../../components/panels/ArticleListPanel";
 import EditorPanel from "../../components/panels/EditorPanel";
+import useNavigationStorage, {
+	mkNavLink,
+} from "../../stores/NavigationStorage";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
 const ColabsList = () => {
@@ -27,6 +30,8 @@ const StoredArticles = () => {
 };
 
 const Profile: NextPage = () => {
+	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
+
 	const [customPanel, setCustomPanel] = useState<ReactNode>(null);
 
 	const [currentTab, setCurrentTab] = useState<boolean | number>(0);
@@ -69,6 +74,10 @@ const Profile: NextPage = () => {
 			setCurrentTab(false);
 		}
 	}, [customPanel]);
+
+	useEffect(() => {
+		setCurrentNavLink("profile");
+	}, [setCurrentNavLink]);
 
 	return (
 		<main className={dftStyles.container}>
