@@ -1,6 +1,8 @@
 import lodash from "lodash";
 import { nanoid } from "nanoid";
 import create from "zustand";
+import { persist } from "zustand/middleware";
+import STORAGE_KEYS from "./StorageKeys";
 
 // Types
 
@@ -9,6 +11,12 @@ export type NavLinkType = {
 	name: string;
 	path: string;
 	hidden: boolean;
+};
+
+export type MainNavStateType = {
+	mainLinks: NavLinkType[];
+	previous: NavLinkType;
+	current: NavLinkType;
 };
 
 type MainNavigationType = {
@@ -58,93 +66,107 @@ const MAIN_NAV_LINKS = [
 	mkNavLink("Sobre", "/about", true),
 ];
 
-const useNavigationStorage = create<MainNavigationType>((set, get) => {
-	// const setCurrentNavFromMainLinks = (name: string) => {
-	// 	const loweredName = name.toLowerCase();
+const useNavigationStorage = create<MainNavigationType>()(
+	persist(
+		// @ts-ignore
+		(set, get) => {
+			const setCurrentNavLink = async (
+				name: string,
+				path?: string,
+				hidden?: boolean
+			) => {
+				if (typeof name !== "string") {
+					return;
+				}
 
-	// 	const current = get().current;
-	// 	const loweredCurrentName = get().current.name.toLowerCase();
+				const loweredName = name.toLowerCase().trim();
 
-	// 	if (loweredCurrentName === loweredName) {
-	// 		return;
-	// 	}
+				if (loweredName.length < 1) {
+					return;
+				}
 
-	// 	const active = get().mainLinks.find(link =>
-	// 		link.name.toLowerCase().includes(loweredName)
-	// 	);
+				const oldCurrent = get().current;
+				const loweredCurrentName = get().current.name.toLowerCase();
 
-	// 	if (!active) {
-	// 		return;
-	// 	}
+				if (loweredCurrentName === loweredName) {
+					return;
+				}
 
-	// 	set({
-	// 		previous: current,
-	// 		current: active,
-	// 	});
-	// };
+				const sanitizedName =
+					loweredName[0].toUpperCase() + loweredName.slice(1);
 
-	const setCurrentNavLink = async (
-		name: string,
-		path?: string,
-		hidden?: boolean
-	) => {
-		const navLink = mkNavLink(name, path, hidden);
-		set({ current: navLink });
-	};
+				const current = mkNavLink(sanitizedName, path, hidden);
 
-	const hideAll = () => {
-		const links = lodash.cloneDeep(get().mainLinks);
-		links.forEach(link => (link.hidden = true));
+				set({
+					previous: oldCurrent,
+					current: current,
+				});
+			};
 
-		set({ mainLinks: links });
-	};
+			const hideAll = () => {
+				const links = lodash.cloneDeep(get().mainLinks);
+				links.forEach(link => (link.hidden = true));
 
-	const showAll = () => {
-		const links = lodash.cloneDeep(get().mainLinks);
-		links.forEach(link => (link.hidden = false));
-		set({ mainLinks: links });
-	};
+				set({ mainLinks: links });
+			};
 
-	const hideLink = (name: string) => {
-		const lowName = name.toLowerCase();
+			const showAll = () => {
+				const links = lodash.cloneDeep(get().mainLinks);
+				links.forEach(link => (link.hidden = false));
+				set({ mainLinks: links });
+			};
 
-		const links = lodash.cloneDeep(get().mainLinks);
+			const hideLink = (name: string) => {
+				const lowName = name.toLowerCase();
 
-		for (const item of links) {
-			if (item.name.toLowerCase() === lowName) {
-				item.hidden = true;
-				break;
-			}
+				const links = lodash.cloneDeep(get().mainLinks);
+
+				for (const item of links) {
+					if (item.name.toLowerCase() === lowName) {
+						item.hidden = true;
+						break;
+					}
+				}
+
+				set({ mainLinks: links });
+			};
+
+			const showLink = (name: string) => {
+				const lowName = name.toLowerCase();
+
+				const links = lodash.cloneDeep(get().mainLinks);
+
+				for (const item of links) {
+					if (item.name.toLowerCase() === lowName) {
+						item.hidden = false;
+						break;
+					}
+				}
+
+				set({ mainLinks: links });
+			};
+
+			return {
+				mainLinks: MAIN_NAV_LINKS,
+				previous: MAIN_NAV_LINKS[0],
+				current: MAIN_NAV_LINKS[0],
+				setCurrentNavLink,
+				hideAll,
+				showAll,
+				hideLink,
+				showLink,
+			};
+		},
+		{
+			name: STORAGE_KEYS.NAVIGATION,
+			getStorage: () => localStorage,
+			partialize: state => {
+				return Object.fromEntries(
+					Object.entries(state).filter(([key]) => !["mainLinks"].includes(key))
+				);
+			},
 		}
-
-		set({ mainLinks: links });
-	};
-
-	const showLink = (name: string) => {
-		const lowName = name.toLowerCase();
-
-		const links = lodash.cloneDeep(get().mainLinks);
-
-		for (const item of links) {
-			if (item.name.toLowerCase() === lowName) {
-				item.hidden = false;
-				break;
-			}
-		}
-
-		set({ mainLinks: links });
-	};
-
-	return {
-		mainLinks: MAIN_NAV_LINKS,
-		previous: MAIN_NAV_LINKS[0],
-		current: MAIN_NAV_LINKS[0],
-		setCurrentNavLink,
-		hideAll,
-		showAll,
-		hideLink,
-		showLink,
-	};
-});
+	)
+);
 
 export default useNavigationStorage;

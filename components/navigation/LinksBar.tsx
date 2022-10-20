@@ -3,12 +3,11 @@ import {
 	DetailedHTMLProps,
 	LiHTMLAttributes,
 	MenuHTMLAttributes,
-	ReactNode,
 } from "react";
 import { NavLinkType } from "../../stores/NavigationStorage";
 
 type LinksBarProps = {
-	links: NavLinkType[];
+	links?: NavLinkType[];
 	current?: NavLinkType;
 	rootProps?: DetailedHTMLProps<MenuHTMLAttributes<HTMLElement>, HTMLElement>;
 	listItemProps?: DetailedHTMLProps<
@@ -30,7 +29,7 @@ const LinksBar = ({
 }: LinksBarProps) => {
 	return (
 		<menu {...rootProps}>
-			{links.map(link => {
+			{(links || []).map(link => {
 				return (
 					<li
 						key={link.id}

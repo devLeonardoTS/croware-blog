@@ -14,6 +14,9 @@ const NavDrawer = ({ drawerProps }: NavDrawerProps) => {
 				paper: dftStyles.container,
 			}}
 			{...drawerProps}
+			disableDiscovery
+			disableSwipeToOpen
+			disableBackdropTransition
 		>
 			<div className={dftStyles.content}>
 				<div className={dftStyles.head}>small close btn on right</div>

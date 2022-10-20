@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import dftStyles from "./NavBar.module.css";
 import { BiMenu } from "react-icons/bi";
 import Image from "next/image";
-import { IconButton, SwipeableDrawer } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { IMG_CROWARE_LOGO } from "../../helpers/constants/assetUrls";
 import LinksBar from "./LinksBar";
-import useNavigationStorage from "../../stores/NavigationStorage";
+import useNavigationStorage, {
+	MainNavStateType,
+} from "../../stores/NavigationStorage";
 import NavDrawer from "./NavDrawer";
 
 type NavbarProps = {};
@@ -16,12 +18,22 @@ const NavBar = ({}: NavbarProps) => {
 	const previousLink = useNavigationStorage(s => s.previous);
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+	const [navData, setNavData] = useState<MainNavStateType>();
+
+	// useEffect(() => {
+	// 	console.log("[NavBar:links]", navData?.mainLinks);
+	// 	console.log("[NavBar:currentLink]", navData?.current);
+	// 	console.log("[NavBar:previousLink]", navData?.previous);
+	// });
 
 	useEffect(() => {
-		console.log("[NavBar:links]", navLinks);
-		console.log("[NavBar:currentLink]", currentLink);
-		console.log("[NavBar:previousLink]", previousLink);
-	});
+		// Conflict fix for SSR x CSR.
+		setNavData({
+			mainLinks: navLinks,
+			current: currentLink,
+			previous: previousLink,
+		});
+	}, [currentLink, navLinks, previousLink]);
 
 	return (
 		<nav className={dftStyles.container}>
@@ -38,8 +50,8 @@ const NavBar = ({}: NavbarProps) => {
 			</div>
 			<div className={dftStyles.linksGroup}>
 				<LinksBar
-					links={navLinks}
-					current={currentLink}
+					links={navData?.mainLinks}
+					current={navData?.current}
 					rootProps={{
 						className: dftStyles.linksBar,
 					}}
@@ -47,8 +59,8 @@ const NavBar = ({}: NavbarProps) => {
 						className: dftStyles.linksBarItems,
 					}}
 				/>
-				<a href={currentLink.path} className={dftStyles.current}>
-					{currentLink.name}
+				<a href={navData?.current.path} className={dftStyles.current}>
+					{navData?.current.name}
 				</a>
 				<div className={dftStyles.buttons}>
 					<IconButton
