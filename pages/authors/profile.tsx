@@ -8,9 +8,12 @@ import AuthorMenuDialog, {
 } from "../../components/dialogs/AuthorMenuDialog";
 import ArticleListPanel from "../../components/panels/ArticleListPanel";
 import EditorPanel from "../../components/panels/EditorPanel";
+import Assets from "../../helpers/constants/Assets";
+import ownDOMPurify from "../../helpers/ownDOMPurify";
 import useNavigationStorage, {
 	mkNavLink,
 } from "../../stores/NavigationStorage";
+import useUserSession, { SessionAuthor } from "../../stores/UserSessionStore";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
 const ColabsList = () => {
@@ -32,8 +35,15 @@ const StoredArticles = () => {
 const Profile: NextPage = () => {
 	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
 
-	const [customPanel, setCustomPanel] = useState<ReactNode>(null);
+	const userAuthStatus = useUserSession(s => s.status);
+	const userData = useUserSession(s => s.user);
+	const authorData = useUserSession(s => s.author);
 
+	const [userId, setUserId] = useState<String>();
+	const [author, setAuthor] = useState<SessionAuthor>();
+	const [isAuthenticated, setAuthenticated] = useState(false);
+
+	const [customPanel, setCustomPanel] = useState<ReactNode>(null);
 	const [currentTab, setCurrentTab] = useState<boolean | number>(0);
 
 	const [authorMenuAnchor, setAuthorMenuAnchor] = useState<
@@ -79,6 +89,20 @@ const Profile: NextPage = () => {
 		setCurrentNavLink("profile");
 	}, [setCurrentNavLink]);
 
+	useEffect(() => {
+		setAuthenticated(userAuthStatus === "authenticated");
+	}, [userAuthStatus]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			setUserId(userData?.id);
+			setAuthor(authorData);
+		} else {
+			setCustomPanel(null);
+			setCurrentTab(0);
+		}
+	}, [isAuthenticated, userData?.id, authorData]);
+
 	return (
 		<main className={dftStyles.container}>
 			<div className={dftStyles.contentContainer}>
@@ -86,64 +110,65 @@ const Profile: NextPage = () => {
 					<div className={dftStyles.head}>
 						<div className={dftStyles.banner}>
 							<img
-								src={"https://wallpaperaccess.com/full/859076.jpg"}
+								src={author?.banner || Assets.placeholder.profile.banner}
 								width={"100%"}
 								height={"100%"}
 								alt="User profile's banner"
 							/>
-							<menu className={dftStyles.bannerIconContainer}>
-								<li key="author-menu">
-									<>
-										<IconButton
-											classes={{
-												root: dftStyles.bannerIcon,
-											}}
-											aria-label={"Author's menu"}
-											aria-controls={
-												isAuthorMenuOpen ? "author-menu" : undefined
+							{isAuthenticated && (
+								<menu className={dftStyles.bannerIconContainer}>
+									<li key="author-menu">
+										<>
+											<IconButton
+												classes={{
+													root: dftStyles.bannerIcon,
+												}}
+												aria-label={"Author's menu"}
+												aria-controls={
+													isAuthorMenuOpen ? "author-menu" : undefined
+												}
+												aria-haspopup={"true"}
+												aria-expanded={isAuthorMenuOpen ? "true" : undefined}
+												onClick={ev => {
+													setAuthorMenuAnchor(ev.currentTarget);
+												}}
+											>
+												<FaCog />
+											</IconButton>
+											{
+												<AuthorMenuDialog
+													isOpen={isAuthorMenuOpen}
+													onClose={closeAuthorDialogMenu}
+													customPanelSetter={setCustomPanel}
+													anchorEl={authorMenuAnchor}
+												/>
 											}
-											aria-haspopup={"true"}
-											aria-expanded={isAuthorMenuOpen ? "true" : undefined}
-											onClick={ev => {
-												setAuthorMenuAnchor(ev.currentTarget);
-											}}
-										>
-											<FaCog />
-										</IconButton>
-										{
-											<AuthorMenuDialog
-												isOpen={isAuthorMenuOpen}
-												onClose={closeAuthorDialogMenu}
-												customPanelSetter={setCustomPanel}
-												anchorEl={authorMenuAnchor}
-											/>
-										}
-									</>
-								</li>
-							</menu>
+										</>
+									</li>
+								</menu>
+							)}
 						</div>
 						<div className={dftStyles.content}>
 							<div className={dftStyles.userPictureContainer}>
-								<img
-									src={
-										"https://pm1.narvii.com/7700/9900de90d3598fd01f7b009aefed860e824b9a24r1-750-783v2_hq.jpg"
-									}
-									width={"100%"}
-									height={"100%"}
-									alt="User profile's picture"
-								/>
+								<div className={dftStyles.picture}>
+									<img
+										src={author?.picture || Assets.placeholder.profile.picture}
+										width={"100%"}
+										height={"100%"}
+										alt="User profile's picture"
+									/>
+								</div>
 							</div>
 							<div className={dftStyles.userDetailsContainer}>
 								<div className={dftStyles.head}>
-									<h1>{"MENHERA-KUN"}</h1>
+									<h1>{author?.name || "Nome do Autor"}</h1>
 								</div>
-								<div className={dftStyles.body}>
-									<p>
-										{
-											"THE NAME IS MENHERA, I'M 18. RIGHT NOW I'M TRYING TO GET THIS WEB PAGE TOGETHER AND MAKE IT WORK FLAWLESSLY ON MOBILE DEVICES."
-										}
-									</p>
-								</div>
+								<div
+									className={dftStyles.body}
+									dangerouslySetInnerHTML={{
+										__html: author?.bio || "<p>Biografia do autor</p>",
+									}}
+								></div>
 							</div>
 						</div>
 					</div>
@@ -164,7 +189,7 @@ const Profile: NextPage = () => {
 						>
 							<Tab label="Artigos" />
 							<Tab label="Colaborações" />
-							<Tab label="Artigos Armazenados *" />
+							{isAuthenticated && <Tab label="Artigos Armazenados *" />}
 						</Tabs>
 					</div>
 				</div>

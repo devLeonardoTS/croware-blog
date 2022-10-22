@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import dftStyles from "./NavBar.module.css";
-import { BiMenu } from "react-icons/bi";
-import Image from "next/image";
 import { IconButton } from "@mui/material";
-import { IMG_CROWARE_LOGO } from "../../helpers/constants/assetUrls";
-import LinksBar from "./LinksBar";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { BiMenu } from "react-icons/bi";
+
+import Assets from "../../helpers/constants/Assets";
 import useNavigationStorage, {
 	MainNavStateType,
 } from "../../stores/NavigationStorage";
+import LinksBar from "./LinksBar";
+import dftStyles from "./NavBar.module.css";
 import NavDrawer from "./NavDrawer";
 
 type NavbarProps = {};
@@ -19,12 +20,6 @@ const NavBar = ({}: NavbarProps) => {
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [navData, setNavData] = useState<MainNavStateType>();
-
-	// useEffect(() => {
-	// 	console.log("[NavBar:links]", navData?.mainLinks);
-	// 	console.log("[NavBar:currentLink]", navData?.current);
-	// 	console.log("[NavBar:previousLink]", navData?.previous);
-	// });
 
 	useEffect(() => {
 		// Conflict fix for SSR x CSR.
@@ -40,7 +35,7 @@ const NavBar = ({}: NavbarProps) => {
 			<div className={dftStyles.logo}>
 				<a href={"/"} className={dftStyles.link}>
 					<Image
-						src={IMG_CROWARE_LOGO}
+						src={Assets.app.logotype}
 						width={"100%"}
 						height={28}
 						className={dftStyles.image}
@@ -70,16 +65,13 @@ const NavBar = ({}: NavbarProps) => {
 						<BiMenu />
 					</IconButton>
 				</div>
-				<div className={dftStyles.drawer}>
-					<NavDrawer
-						drawerProps={{
-							open: isDrawerOpen,
-							onOpen: () => setIsDrawerOpen(true),
-							onClose: () => setIsDrawerOpen(false),
-						}}
-					/>
-				</div>
 			</div>
+			<NavDrawer
+				isOpen={isDrawerOpen}
+				toggleDrawer={setIsDrawerOpen}
+				links={navLinks}
+				currentLink={currentLink}
+			/>
 		</nav>
 	);
 };

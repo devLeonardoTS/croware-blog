@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import dftStyles from "./ArticleListItem.module.css";
+import dayjs from "dayjs";
 import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
+
+import Assets from "../helpers/constants/Assets";
+import { PageHrefs } from "../helpers/constants/PageHrefs";
 import useBreakpoints from "../hooks/useBreakpoints";
-import dayjs from "dayjs";
-import Link from "next/link";
-import { HREF_ARTICLES, HREF_HOME } from "../helpers/constants/hrefBases";
-import { IMG_ARTICLE_PLACEHOLDER } from "../helpers/constants/assetUrls";
+import dftStyles from "./ArticleListItem.module.css";
 
 interface ArticleListItem {
 	article: any;
@@ -57,10 +58,17 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 
 	return (
 		<div className={dftStyles.container}>
-			<Link href={HREF_ARTICLES + "/" + article?.attributes?.slug || HREF_HOME}>
+			<Link
+				href={
+					PageHrefs.articles + "/" + article?.attributes?.slug || PageHrefs.home
+				}
+			>
 				<a className={dftStyles.imgContainer}>
 					<Image
-						src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
+						src={
+							picture.data?.attributes.url ||
+							Assets.placeholder.article.thumbnail
+						}
 						layout="fill"
 						className={dftStyles.image}
 						alt="An image representing the article context."
@@ -72,7 +80,10 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 			<div className={dftStyles.previewContainer}>
 				<div className={dftStyles.previewHead}>
 					<Link
-						href={HREF_ARTICLES + "/" + article?.attributes?.slug || HREF_HOME}
+						href={
+							PageHrefs.articles + "/" + article?.attributes?.slug ||
+							PageHrefs.home
+						}
 					>
 						<a className={dftStyles.titleLink}>
 							<h2>{article?.attributes?.title || "Sem título..."}</h2>

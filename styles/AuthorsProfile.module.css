@@ -3,14 +3,14 @@
 }
 
 .contentContainer {
-	@apply flex flex-col max-w-screen-md py-4 mx-auto gap-4;
+	@apply flex flex-col max-w-screen-md w-full py-4 mx-auto gap-4;
 }
 
 .profileContainer {
 	@apply bg-clr-primary;
 }
 
-.profileContainer .head {
+.profileContainer > .head {
 	@apply p-4;
 }
 
@@ -39,20 +39,25 @@
 }
 
 .profileContainer .content {
-	@apply flex flex-col gap-4;
+	@apply flex flex-col gap-2;
 }
 
 /* Width of ".userPicture" ".img" must be the same! */
 .profileContainer .content .userPictureContainer {
-	@apply relative h-[16px] w-[120px];
+	@apply relative h-[54px] w-[120px];
 	@apply self-center;
 }
 
-.profileContainer .content .userPictureContainer img {
-	@apply absolute h-[120px] overflow-hidden;
+.profileContainer .content .userPictureContainer .picture {
+	@apply absolute bottom-[0px] overflow-hidden;
+	@apply w-[120px] h-[120px];
 	@apply border-[4px] rounded-full;
-	@apply bottom-[0px];
-	@apply object-cover object-center;
+	@apply border-clr-primary border-opacity-95 bg-clr-primary bg-opacity-95;
+}
+
+.profileContainer .content .userPictureContainer img {
+	/* @apply border-[4px] rounded-full; */
+	@apply object-contain object-center;
 }
 
 .profileContainer .content .userDetailsContainer {
@@ -62,6 +67,10 @@
 .profileContainer .content .userDetailsContainer .head {
 	@apply text-center;
 	text-shadow: 0 0 6px black, 0 0 6px black, 0 0 6px black, 0 0 6px black;
+}
+
+.profileContainer .content .userDetailsContainer .body {
+	@apply text-center my-4;
 }
 
 .tabsContainer {

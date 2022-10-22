@@ -1,0 +1,96 @@
+.container {
+	@apply relative flex flex-col;
+}
+
+.bannerContainer {
+	@apply relative w-full h-[120px] overflow-hidden rounded-sm;
+}
+
+.bannerContainer .banner {
+	@apply object-cover object-center h-full;
+}
+
+.bannerContainer .bannerOverlay {
+	@apply absolute top-0 overflow-hidden;
+	@apply flex justify-between items-start;
+	@apply w-full h-full;
+}
+
+.bannerContainer .bannerOverlay .title {
+	@apply flex flex-col gap-2 m-2 px-2 justify-center items-center;
+	@apply min-h-[32px] rounded;
+	@apply bg-black bg-opacity-60;
+	@apply transition-all ease-in-out duration-300;
+	@apply hover:text-clr-accent;
+}
+.bannerContainer .bannerOverlay .title a {
+	@apply text-sm lowercase first-letter:uppercase;
+	@apply hover:text-clr-accent;
+	@apply border-b-2 border-opacity-100 border-clr-accent;
+}
+
+.bannerContainer .bannerOverlay .greetings {
+	@apply flex flex-col gap-2 m-2 px-2 justify-center items-center;
+	@apply min-h-[32px] rounded;
+	@apply bg-black bg-opacity-60;
+}
+
+.bannerContainer .bannerOverlay .menu {
+	@apply flex flex-col gap-2 m-2 rounded;
+}
+
+.bannerContainer .bannerOverlay .menu .item .iconButton {
+	@apply w-8 h-8 rounded;
+	@apply bg-black bg-opacity-60;
+}
+.bannerContainer .bannerOverlay .menu .item .iconButton svg {
+	@apply transition-all ease-in-out duration-300;
+}
+.bannerContainer .bannerOverlay .menu .item .iconButton:hover svg,
+.bannerContainer .bannerOverlay .menu .item .iconButton:active svg {
+	@apply fill-clr-accent;
+}
+
+.bannerContainer
+	.bannerOverlay
+	.menu
+	.item
+	.iconButton[data-active="true"]
+	svg {
+	@apply transition-all ease-in-out duration-300;
+	@apply fill-clr-info;
+}
+.bannerContainer
+	.bannerOverlay
+	.menu
+	.item
+	.iconButton[data-active="true"]:hover
+	svg {
+	@apply fill-clr-accent;
+}
+
+.bannerContainer
+	.bannerOverlay
+	.menu
+	.item
+	.iconButton[data-active="true"]:active
+	svg {
+	@apply fill-clr-accent;
+}
+
+/* Width of ".userPicture" ".img" must be the same! */
+.avatarContainer {
+	@apply relative h-[56px] w-[120px];
+	@apply self-center;
+}
+
+.avatarContainer .avatar {
+	@apply absolute bottom-[0px] overflow-hidden;
+	@apply w-[120px] h-[120px];
+	@apply border-[4px] rounded-full;
+	@apply border-clr-primary border-opacity-95 bg-clr-primary bg-opacity-95;
+}
+
+.avatarContainer .avatar img {
+	@apply object-contain object-center;
+}

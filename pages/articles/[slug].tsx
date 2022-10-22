@@ -1,17 +1,16 @@
 import dayjs from "dayjs";
-import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
-import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
+
+import Assets from "../../helpers/constants/Assets";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
 import ownDOMPurify from "../../helpers/ownDOMPurify";
-import useNavigationStorage, {
-	mkNavLink,
-} from "../../stores/NavigationStorage";
+import useNavigationStorage from "../../stores/NavigationStorage";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
+import type { GetServerSideProps, NextPage } from "next";
 type ArticlePageProps = {
 	article: any;
 };
@@ -147,7 +146,10 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						<div className={dftStyles.head}>
 							<div className={dftStyles.imageArea}>
 								<Image
-									src={picture?.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
+									src={
+										picture?.data?.attributes.url ||
+										Assets.placeholder.article.thumbnail
+									}
 									layout="fill"
 									className={dftStyles.image}
 									alt="An image representing the article context."

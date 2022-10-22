@@ -11,7 +11,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { IMG_ARTICLE_PLACEHOLDER } from "../../../helpers/constants/assetUrls";
+
+import Assets from "../../../helpers/constants/Assets";
 import dftStyles from "./ImageField.module.css";
 
 type ImageFieldProps = {
@@ -44,15 +45,6 @@ const ImageField = ({
 	const touchRippleRef = useRef<TouchRippleActions>(null);
 
 	useEffect(() => {
-		// if (file) {
-		// 	const reader = new FileReader();
-		// 	reader.readAsDataURL(file);
-		// 	reader.onload = () => {
-		// 		setPreview(reader.result);
-		// 	};
-		// } else {
-		// 	setPreview(undefined);
-		// }
 		if (file) {
 			setPreview(URL.createObjectURL(file));
 		} else {
@@ -74,7 +66,7 @@ const ImageField = ({
 				<label htmlFor={inputId}>
 					<figure {...figureProps}>
 						<img
-							src={preview || IMG_ARTICLE_PLACEHOLDER}
+							src={preview || Assets.placeholder.article.thumbnail}
 							alt={imageProps?.alt || legend}
 							{...imageProps}
 						/>

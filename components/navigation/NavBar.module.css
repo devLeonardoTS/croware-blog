@@ -1,6 +1,6 @@
 .container {
 	@apply flex justify-between;
-	@apply mx-6 py-2;
+	@apply mx-4 py-2;
 	@apply min-h-[48px];
 }
 
@@ -17,7 +17,7 @@
 }
 
 .linksGroup {
-	@apply flex justify-end items-center gap-4;
+	@apply flex items-center justify-end gap-4;
 }
 
 .linksGroup .linksBar {
@@ -40,6 +40,7 @@
 
 .linksGroup .current {
 	@apply border-b-2 border-clr-accent lowercase first-letter:uppercase;
+	@apply transition-all ease-in-out duration-300;
 	@apply hover:text-clr-accent;
 	@apply md:hidden;
 }

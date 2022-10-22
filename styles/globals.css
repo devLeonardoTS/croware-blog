@@ -16,7 +16,7 @@
 html,
 body {
 	min-height: 100%;
-	background-image: url("https://res.cloudinary.com/devlts/image/upload/v1661554823/black_scales_mjj4j7.webp");
+	background-image: url("/assets/black-scales-pattern.webp");
 	background-repeat: repeat;
 }
 

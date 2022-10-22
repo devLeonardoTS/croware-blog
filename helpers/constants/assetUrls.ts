@@ -1,2 +1,0 @@
-export const IMG_CROWARE_LOGO = "https://res.cloudinary.com/devlts/image/upload/v1661556815/Croware-Type-Logo_ounepa.svg";
-export const IMG_ARTICLE_PLACEHOLDER = "https://res.cloudinary.com/devlts/image/upload/v1661625433/desk-gd5513cf43_1920_v66cdr.jpg"
