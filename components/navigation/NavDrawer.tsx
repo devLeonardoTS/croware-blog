@@ -1,11 +1,9 @@
 import { Divider, SwipeableDrawer, SwipeableDrawerProps } from "@mui/material";
 import { nanoid } from "nanoid";
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Assets from "../../helpers/constants/Assets";
-import useNavigationStorage, {
-	NavLinkType,
-} from "../../stores/NavigationStorage";
+import { NavLinkType } from "../../stores/NavigationStorage";
 import useUserSession, { SessionAuthor } from "../../stores/UserSessionStore";
 import DrawerSignInForm from "./DrawerSignInForm";
 import DrawerUserInfo from "./DrawerUserInfo";
@@ -22,6 +20,7 @@ type NavDrawerProps = {
 };
 
 const authorDefaults: SessionAuthor = {
+	id: "",
 	name: "Author's name",
 	bio: "Author's bio",
 	banner: "",
@@ -93,6 +92,10 @@ const NavDrawer = ({
 							<DrawerUserInfo
 								user={author.name}
 								signOutHandler={() => {
+									const isAllowed = confirm("Tem certeza que deseja sair?");
+									if (!isAllowed) {
+										return;
+									}
 									setAuthOpen(false);
 									signOutHandler();
 								}}

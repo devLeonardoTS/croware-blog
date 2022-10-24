@@ -6,6 +6,7 @@ import { GoSignOut } from "react-icons/go";
 import EditorPanel from "../panels/EditorPanel";
 import dftStyles from "./AuthorMenuDialog.module.css";
 import useArticleFormStorage from "../../stores/ArticleFormStorage";
+import useUserSession from "../../stores/UserSessionStore";
 
 export type AuthorMenuDialogCloseHandler = (args?: {
 	ev?: MouseEvent<HTMLButtonElement>;
@@ -24,6 +25,8 @@ const AuthorMenuDialog = (props: AuthorMenuDialogProps) => {
 	const articleCreationSetup = useArticleFormStorage(
 		s => s.articleCreationSetup
 	);
+
+	const signOut = useUserSession(s => s.signOut);
 
 	return (
 		<Menu
@@ -80,6 +83,7 @@ const AuthorMenuDialog = (props: AuthorMenuDialogProps) => {
 				onClick={() => {
 					props.onClose();
 				}}
+				disabled
 			>
 				<FaUserEdit />
 				Editar perfil
@@ -90,6 +94,13 @@ const AuthorMenuDialog = (props: AuthorMenuDialogProps) => {
 			<MenuItem
 				onClick={() => {
 					props.onClose();
+
+					const isAllowed = confirm("Tem certeza que deseja sair?");
+					if (!isAllowed) {
+						return;
+					}
+
+					signOut();
 				}}
 			>
 				<GoSignOut />

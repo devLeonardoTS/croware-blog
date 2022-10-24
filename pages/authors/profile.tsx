@@ -9,10 +9,7 @@ import AuthorMenuDialog, {
 import ArticleListPanel from "../../components/panels/ArticleListPanel";
 import EditorPanel from "../../components/panels/EditorPanel";
 import Assets from "../../helpers/constants/Assets";
-import ownDOMPurify from "../../helpers/ownDOMPurify";
-import useNavigationStorage, {
-	mkNavLink,
-} from "../../stores/NavigationStorage";
+import useNavigationStorage from "../../stores/NavigationStorage";
 import useUserSession, { SessionAuthor } from "../../stores/UserSessionStore";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
@@ -189,7 +186,7 @@ const Profile: NextPage = () => {
 						>
 							<Tab label="Artigos" />
 							<Tab label="Colaborações" />
-							{isAuthenticated && <Tab label="Artigos Armazenados *" />}
+							{isAuthenticated && <Tab label="Artigos Armazenados" />}
 						</Tabs>
 					</div>
 				</div>

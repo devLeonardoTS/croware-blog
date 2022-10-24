@@ -1,12 +1,17 @@
 import { MenuItem } from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
+import { stringify } from "qs";
 import { useEffect, useState } from "react";
+import slugify from "slugify";
+import { OwnAxios } from "../../helpers/utilities/OwnAxios";
 
 import useArticleFormStorage, {
 	ArticleFormDataType,
 	ArticleFormOnSubmitHandler,
 } from "../../stores/ArticleFormStorage";
+import useUserSession from "../../stores/UserSessionStore";
 import ArticlePreviewModal, {
 	ArticlePreviewCloseHandler,
 } from "../modals/ArticlePreviewModal";
@@ -45,14 +50,189 @@ type ArticleFormProps = {
 
 // let renders = 0;
 
+type ArticleFormCategory = {
+	id: number;
+	attributes: {
+		createdAt: string;
+		updatedAt: string;
+		publishedAt: string;
+		name: string;
+	};
+};
+
+const getCategories = async () => {
+	const endPoint = "/api/article-categories";
+
+	// console.log("[articleForm:getCategories] - started...");
+
+	const response = await OwnAxios.client.get<{
+		data: Array<ArticleFormCategory>;
+	}>(endPoint);
+	const result = response.data.data;
+
+	// console.log("[articleForm:getCategories] - done...", result);
+
+	return result;
+};
+
+const getColaborators = async () => {
+	const endPoint = "/api/authors";
+
+	// console.log("[articleForm:getColaborators] - started...");
+
+	const response = await OwnAxios.client.get<{
+		data: Array<ArticleFormCategory>;
+	}>(endPoint);
+	const result = response.data.data;
+
+	// console.log("[articleForm:getColaborators] - done...", result);
+
+	return result;
+};
+
+type ArticleActionArgs = {
+	authorId: string;
+	values: ArticleFormDataType;
+};
+
+const createArticleHandler = async ({
+	authorId,
+	values,
+}: ArticleActionArgs) => {
+	// console.log("[ArticleForm:createArticleHandler] - Starting...", values);
+
+	const query = stringify(
+		{
+			populate: "*",
+		},
+		{
+			encodeValuesOnly: true,
+		}
+	);
+
+	const endPoint = `/api/articles?${query}`;
+	const result = await OwnAxios.client
+		.post<any>(endPoint, {
+			data: {
+				author: authorId,
+				title: values.title,
+				slug: slugify(String(values?.title), {
+					trim: true,
+					lower: true,
+					strict: true,
+				}),
+				content: {
+					excerpt: values.excerpt,
+					body: values.content,
+				},
+				article_category: values.category,
+				article_hashtags: (values.hashtagsArr || []).map(i => i.name),
+				colaborators: values.colaborators,
+				publishedAt: null,
+			},
+		})
+		.then(response => response.data);
+
+	// console.log("[ArticleForm:createArticleHandler] - Done...", result);
+
+	return result;
+};
+
+type ArticleUpdateArgs = {
+	authorId: string;
+	initial: any;
+	updated: ArticleFormDataType;
+};
+
+const updateArticleHandler = async ({
+	authorId,
+	initial,
+	updated,
+}: ArticleUpdateArgs) => {
+	// console.log("[ArticleForm:updateArticleHandler] - Starting...", {
+	// 	authorId,
+	// 	initial,
+	// 	updated,
+	// });
+
+	if (!initial?.id) {
+		throw new Error(
+			`Não foi possível atualizar a publicação, o "id" não foi encontrado.`
+		);
+	}
+
+	if (authorId !== initial?.attributes?.author?.data?.id) {
+		throw new Error(`Você não tem permissão para atualizar esta publicação.`);
+	}
+
+	const handleSlug = (value: string) => {
+		return slugify(value, {
+			trim: true,
+			lower: true,
+			strict: true,
+		});
+	};
+
+	if (updated?.title) {
+		updated.slug = handleSlug(updated.title);
+	}
+
+	const query = stringify(
+		{
+			populate: "*",
+		},
+		{
+			encodeValuesOnly: true,
+		}
+	);
+
+	const endPoint = `/api/articles/${initial.id}?${query}`;
+	const result = await OwnAxios.client
+		.put<any>(endPoint, {
+			data: updated,
+		})
+		.then(response => response.data);
+
+	// console.log("[ArticleForm:updateArticleHandler] - Done...", result);
+
+	return result;
+};
+
+type ImageUploadHandlerArgs = {
+	file: File;
+};
+
+const uploadImageHandler = async ({ file }: ImageUploadHandlerArgs) => {
+	console.log("[ArticleForm:uploadImageHandler] - Starting...", file);
+
+	const endPoint = `/api/upload`;
+
+	const formData = new FormData();
+	formData.append("files", file);
+
+	const result = await OwnAxios.client
+		.post<any>(endPoint, formData)
+		.then(response => response.data);
+	// array of files;
+
+	console.log("[ArticleForm:uploadImageHandler] - Done...", result);
+
+	return result;
+};
+
 const ArticleForm = (props: ArticleFormProps) => {
 	const currentValues = useArticleFormStorage(s => s.currentValues);
 	const formErrors = useArticleFormStorage(s => s.errors);
 	const setCurrentFieldValue = useArticleFormStorage(
 		s => s.setCurrentFieldValue
 	);
-	const onSubmitHandler = useArticleFormStorage(s => s.onSubmitHandler);
+	// const onSubmitHandler = useArticleFormStorage(s => s.onSubmitHandler);
+	const validateForm = useArticleFormStorage(s => s.validate);
 	const resetForm = useArticleFormStorage(s => s.resetForm);
+	const clearForm = useArticleFormStorage(s => s.clearStorage);
+	const formStatus = useArticleFormStorage(s => s.status);
+
+	const author = useUserSession(s => s.author);
 
 	const getHashtagsHelperText = () => {
 		const hasValue = (currentValues.hashtagsArr?.length || []) > 0;
@@ -88,11 +268,48 @@ const ArticleForm = (props: ArticleFormProps) => {
 		}
 	};
 
+	const queryCategories = useQuery(
+		["get:article-form:categories"],
+		getCategories,
+		{
+			staleTime: 10 * 1000,
+		}
+	);
+
+	const queryColaborators = useQuery(
+		["get:article-form:colaborators"],
+		getColaborators,
+		{
+			staleTime: 10 * 1000,
+		}
+	);
+
+	const articleMaker = useMutation(createArticleHandler);
+	const articleUpdater = useMutation(updateArticleHandler);
+	const imageUploader = useMutation(uploadImageHandler);
+
 	// useEffect(() => {
-	// 	console.log("[ArticleForm:initialValues]", initialValues);
+	// 	// console.log("[ArticleForm:initialValues]", initialValues);
 	// 	console.log("[ArticleForm:currentValues]", currentValues);
 	// 	console.log("[ArticleForm:errors]", formErrors);
 	// });
+
+	const isFormLoading =
+		queryCategories.isLoading || queryColaborators.isLoading;
+	const hasFormLoadFailed =
+		queryCategories.isError || queryColaborators.isError;
+
+	if (isFormLoading) {
+		return <div>{"Carregando formulário..."}</div>;
+	}
+
+	if (hasFormLoadFailed) {
+		return (
+			<div>
+				{"Não foi possível carregar o formulário, tente novamente mais tarde."}
+			</div>
+		);
+	}
 
 	return (
 		<div className={dftStyles.container}>
@@ -239,6 +456,8 @@ const ArticleForm = (props: ArticleFormProps) => {
 									id: "new-pub-category",
 									name: "category",
 									value: currentValues.category,
+									disabled: queryCategories.isLoading,
+									// onFocus: async ev => await fetchCategories(),
 									onChange: ev =>
 										setCurrentFieldValue("category", ev.target.value),
 								}}
@@ -248,10 +467,14 @@ const ArticleForm = (props: ArticleFormProps) => {
 								error={Boolean(formErrors["category"])}
 							>
 								<MenuItem
+									key={nanoid()}
 									onClick={() => setCurrentFieldValue("category", "")}
 								></MenuItem>
-								<MenuItem value="Tecnologia">Tecnologia</MenuItem>
-								<MenuItem value="Evento">Evento</MenuItem>
+								{queryCategories.data?.map(item => (
+									<MenuItem key={nanoid()} value={item.id}>
+										{item.attributes.name}
+									</MenuItem>
+								))}
 							</SelectField>
 
 							<SelectField
@@ -264,6 +487,9 @@ const ArticleForm = (props: ArticleFormProps) => {
 									name: "colaborators",
 									multiple: true,
 									value: currentValues.colaborators,
+									disabled: queryColaborators.isLoading,
+									maxRows: 4,
+									// onFocus: ev => fetchColaborators(),
 									onChange: ev => {
 										setCurrentFieldValue("colaborators", ev.target.value);
 									},
@@ -275,11 +501,14 @@ const ArticleForm = (props: ArticleFormProps) => {
 								error={Boolean(formErrors["colaborators"])}
 							>
 								<MenuItem
+									key={nanoid()}
 									onClick={() => setCurrentFieldValue("colaborators", [])}
 								></MenuItem>
-								<MenuItem value="Riko">Riko</MenuItem>
-								<MenuItem value="Reg">Reg</MenuItem>
-								<MenuItem value="Nanachi">Nanachi</MenuItem>
+								{queryColaborators.data?.map(item => (
+									<MenuItem key={nanoid()} value={item.id}>
+										{item.attributes.name}
+									</MenuItem>
+								))}
 							</SelectField>
 						</div>
 
@@ -297,10 +526,72 @@ const ArticleForm = (props: ArticleFormProps) => {
 					</div>
 					<div className={dftStyles.actions}>
 						<OutlinedButton
-							onClick={() => {
+							onClick={async () => {
 								const isAllowed = askPermission("submit");
-								if (isAllowed) {
-									onSubmitHandler(currentValues);
+								if (!isAllowed) {
+									return;
+								}
+
+								const errorsObj = await validateForm();
+								if (Object.keys(errorsObj).length > 0) {
+									return;
+								}
+
+								if (formStatus === "creating") {
+									if (!author?.id) {
+										return;
+									}
+
+									const newArticle = await articleMaker
+										.mutateAsync({
+											authorId: author.id,
+											values: currentValues,
+										})
+										.catch(error => {
+											if (window) {
+												alert(
+													"Não foi possível salvar sua publicação. Tente novamente mais tarde."
+												);
+											}
+										});
+
+									if (!newArticle?.data) {
+										return;
+									}
+
+									if (currentValues?.thumbnail) {
+										const uploadedImageData = await imageUploader
+											.mutateAsync({
+												file: currentValues.thumbnail,
+											})
+											.catch(() => {
+												// Do nothing...
+											});
+
+										const imageData = uploadedImageData?.[0];
+
+										if (imageData) {
+											await articleUpdater
+												.mutateAsync({
+													authorId: author.id,
+													initial: newArticle.data,
+													updated: {
+														picture: imageData,
+													},
+												})
+												.catch(error => {
+													// Do nothing again...
+												});
+										}
+									}
+
+									await clearForm();
+
+									if (window) {
+										alert(
+											`Artigo salvo com sucesso! Verifique os "artigos armazenados" para torna-la pública.`
+										);
+									}
 								}
 							}}
 						>

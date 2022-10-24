@@ -7,6 +7,9 @@ import { useEffect } from "react";
 import { StyledEngineProvider } from "@mui/material";
 import useUserSession from "../stores/UserSessionStore";
 import useNavigationStorage from "../stores/NavigationStorage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const currentPage = useNavigationStorage(s => s.current);
@@ -17,19 +20,21 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	}, [tryUserRefresh]);
 
 	return (
-		<StyledEngineProvider injectFirst>
-			<Layout>
-				<Head>
-					<title>{`Croware-Tech Blog - ${currentPage.name}`}</title>
-					<meta
-						name="description"
-						content="Croware-tech Blog - All things digital technology."
-					/>
-					<link rel="icon" href="/favicon.ico" />
-				</Head>
-				<Component {...pageProps} />
-			</Layout>
-		</StyledEngineProvider>
+		<QueryClientProvider client={queryClient}>
+			<StyledEngineProvider injectFirst>
+				<Layout>
+					<Head>
+						<title>{`Croware-Tech Blog - ${currentPage.name}`}</title>
+						<meta
+							name="description"
+							content="Croware-tech Blog - All things digital technology."
+						/>
+						<link rel="icon" href="/favicon.ico" />
+					</Head>
+					<Component {...pageProps} />
+				</Layout>
+			</StyledEngineProvider>
+		</QueryClientProvider>
 	);
 }
 

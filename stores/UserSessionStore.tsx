@@ -5,7 +5,6 @@ import * as yup from "yup";
 import * as qs from "qs";
 import { persist } from "zustand/middleware";
 import STORAGE_KEYS from "./StorageKeys";
-import useArticleFormStorage from "./ArticleFormStorage";
 
 // Types.
 export type UserCredentials = {
@@ -24,6 +23,7 @@ type SessionUser = {
 };
 
 export type SessionAuthor = {
+	id: string;
 	name: string;
 	bio: string;
 	picture: string;
@@ -55,9 +55,6 @@ const useUserSession = create<SessionContextType>()(
 	persist(
 		// @ts-ignore
 		(set, get) => {
-			const clearArticleFormStorage =
-				useArticleFormStorage.getState().clearStorage;
-
 			const getUserDetails = async () => {
 				const status = get().status;
 				if (status !== "authenticated") {
@@ -97,6 +94,7 @@ const useUserSession = create<SessionContextType>()(
 
 				set({
 					author: {
+						id: data?.author?.id || "",
 						name: data?.author?.name || "",
 						bio: data?.author?.bio || "",
 						slug: data?.author?.slug || "",
@@ -139,6 +137,7 @@ const useUserSession = create<SessionContextType>()(
 
 				if (!data) {
 					get().signOut();
+					return;
 				}
 
 				if (data) {
@@ -156,8 +155,6 @@ const useUserSession = create<SessionContextType>()(
 
 					OwnAxios.setAuthHeader(data.jwt);
 
-					clearArticleFormStorage();
-
 					await getUserDetails();
 				}
 			};
@@ -171,8 +168,6 @@ const useUserSession = create<SessionContextType>()(
 					expiresAt: "",
 				});
 				OwnAxios.setAuthHeader();
-
-				clearArticleFormStorage();
 			};
 
 			const tryRefresh = async () => {
@@ -220,11 +215,3 @@ const useUserSession = create<SessionContextType>()(
 );
 
 export default useUserSession;
-
-// Facade Layer.
-// export const useUser = () => useUserSession(state => state.user);
-// export const useUserAuthStatus = () => useUserSession(state => state.status);
-// export const useSignIn = () => useUserSession(state => state.signIn);
-// export const useSignOut = () => useUserSession(state => state.signOut);
-// export const useTryRefreshUserAuth = () =>
-// 	useUserSession(state => state.tryRefresh);

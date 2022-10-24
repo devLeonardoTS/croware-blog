@@ -1,6 +1,7 @@
+import * as yup from "yup";
 import create from "zustand";
 import { persist } from "zustand/middleware";
-import * as yup from "yup";
+
 import HashtagType from "../components/forms/types/HashtagType";
 import STORAGE_KEYS from "./StorageKeys";
 
@@ -16,25 +17,27 @@ export type ArticleFormDataType = {
 	colaborators?: string[];
 	content?: string;
 	thumbnail?: File;
+	publishedAt?: string;
 };
 
 export type ArticleFormOnSubmitHandler = (
-	values: ArticleFormDataType
+	values: ArticleFormDataType,
+	authorId: string
 ) => void | Promise<void>;
+
+export type ActionStatus = "idle" | "loading" | "success" | "fail";
 
 export type ArticleFormStatus = "creating" | "updating";
 
 export type FormErrorType = Record<string, Array<string>>;
 
 export type ArticleFormStorageType = {
-	status?: ArticleFormStatus;
+	status: ArticleFormStatus;
 
 	initialValues: ArticleFormDataType;
 	currentValues: ArticleFormDataType;
 
 	errors: FormErrorType;
-
-	onSubmitHandler: ArticleFormOnSubmitHandler;
 
 	validate: () => Promise<FormErrorType> | FormErrorType;
 
@@ -123,16 +126,6 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 
 					set({ errors: errorList });
 					return errorList;
-
-					// console.log("error", {
-					// 	cause: validationError.cause,
-					// 	errors: validationError.errors,
-					// 	inner: validationError.inner,
-					// 	msg: validationError.message,
-					// 	name: validationError.name,
-					// 	path: validationError.path,
-					// 	type: validationError.type,
-					// });
 				}
 			};
 
@@ -174,7 +167,6 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 				validateOnChange?: boolean
 			) => {
 				const currentValues = get().currentValues;
-				const isValidField = Object.keys(currentValues).includes(field);
 
 				let shouldValidate = validateOnChange;
 				switch (typeof shouldValidate) {
@@ -186,11 +178,9 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 						break;
 				}
 
-				if (isValidField) {
-					set({ currentValues: { ...currentValues, [field]: value } });
-					if (shouldValidate) {
-						await validateField(field);
-					}
+				set({ currentValues: { ...currentValues, [field]: value } });
+				if (shouldValidate) {
+					await validateField(field);
 				}
 			};
 
@@ -200,7 +190,6 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 					initialValues: dftValues,
 					currentValues: dftValues,
 					errors: {},
-					onSubmitHandler: onSubmitManager,
 				});
 
 			const resetForm = async () => {
@@ -226,70 +215,11 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 				});
 			};
 
-			// Handlers
-			const createArticle: ArticleFormOnSubmitHandler = async values => {
-				console.log(
-					"[ArticleStore:createArticle] - Creating article...",
-					values
-				);
-			};
-
-			const updateArticle: ArticleFormOnSubmitHandler = async values => {
-				console.log(
-					"[ArticleStore:updateArticle] - Updating article...",
-					values
-				);
-			};
-
-			const onSubmitManager: ArticleFormOnSubmitHandler = async values => {
-				await validate();
-
-				const status = get()?.status;
-				const errors = get()?.errors;
-				const hasErrors = Object.keys(errors || {}).length > 0;
-
-				console.log("[ArticleStore:onSubmitManager] - Forwarding submit...");
-
-				if (hasErrors || !status) {
-					console.log("[ArticleStore:onSubmitManager] - Submission failed!", {
-						errors,
-						status,
-					});
-					return;
-				}
-
-				switch (status) {
-					case "creating":
-						await createArticle(values);
-						break;
-					case "updating":
-						await updateArticle(values);
-						break;
-					default:
-						await createArticle(values);
-						break;
-				}
-
-				console.log("[ArticleStore:onSubmitManager] - Operation complete!");
-				await clearStorage();
-			};
-
-			// const publishArticle: ArticleFormOnSubmitHandler = async values => {
-			// 	// await validate();
-			// 	console.log("[ArticleStore:publishArticle] - Unpublishing article...", values);
-			// };
-
-			// const unpublishArticle: ArticleFormOnSubmitHandler = async values => {
-			// 	// await validate();
-			// 	console.log("[ArticleStore:unpublishArticle] - Publishing article...", values);
-			// };
-
 			return {
 				status: "creating",
 				initialValues: dftValues,
 				currentValues: dftValues,
 				errors: {},
-				onSubmitHandler: onSubmitManager,
 				validate,
 				setInitialValues,
 				setCurrentValues,
@@ -303,6 +233,20 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 		{
 			name: STORAGE_KEYS.ARTICLE_FORM,
 			getStorage: () => localStorage,
+			partialize: s => ({
+				status: s.status,
+				initialValues: {
+					...s.initialValues,
+					thumbnail: undefined,
+					publishedAt: undefined,
+				},
+				currentValues: {
+					...s.currentValues,
+					thumbnail: undefined,
+					publishedAt: undefined,
+				},
+				errors: s.errors,
+			}),
 		}
 	)
 );

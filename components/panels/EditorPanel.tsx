@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import useArticleFormStorage from "../../stores/ArticleFormStorage";
+import useUserSession from "../../stores/UserSessionStore";
 import ArticleForm from "../forms/ArticleForm";
 import dftStyles from "./EditorPanel.module.css";
 
@@ -7,6 +8,8 @@ type EditorPanelProps = {};
 
 const EditorPanel = ({}: EditorPanelProps) => {
 	const articleFormStatus = useArticleFormStorage(s => s.status);
+	const userAuthStatus = useUserSession(s => s.status);
+	const clearFormStorage = useArticleFormStorage(s => s.clearStorage);
 
 	const getHeaderText = () => {
 		switch (articleFormStatus) {
@@ -18,6 +21,13 @@ const EditorPanel = ({}: EditorPanelProps) => {
 				break;
 		}
 	};
+
+	useEffect(() => {
+		const isAuthenticated = userAuthStatus === "authenticated";
+		if (!isAuthenticated) {
+			clearFormStorage();
+		}
+	}, [clearFormStorage, userAuthStatus]);
 
 	return (
 		<div className={dftStyles.container}>

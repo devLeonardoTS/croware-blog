@@ -4,7 +4,6 @@
 
 .divider {
 	@apply border-black;
-	/* @apply sm:hidden; */
 }
 
 .contentContainer {
@@ -13,7 +12,7 @@
 }
 
 .articleContainer {
-	@apply flex flex-col bg-clr-primary max-w-screen-md border-none rounded-md;
+	@apply flex flex-col bg-clr-primary max-w-screen-md w-full border-none rounded-md;
 	@apply sm:bg-opacity-80 sm:border;
 }
 
@@ -87,8 +86,3 @@
 .content .body {
 	@apply px-4;
 }
-
-/* .content .body hr {
-	@apply m-0;
-	height: 2px;
-} */

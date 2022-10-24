@@ -2,13 +2,17 @@
 	@apply flex justify-center items-center;
 }
 
+.container {
+	@apply max-w-screen-md w-full m-4;
+}
+
 .container hr {
 	@apply bg-clr-secondary;
 }
 
 .content {
 	@apply flex flex-col gap-4;
-	@apply max-w-screen-md w-full p-4;
+	@apply p-4;
 	@apply border rounded-sm border-none;
 	@apply bg-clr-primary;
 }

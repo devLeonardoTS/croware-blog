@@ -2,7 +2,6 @@ import { Button } from "@mui/material";
 import { TouchRippleActions } from "@mui/material/ButtonBase/TouchRipple";
 import { nanoid } from "nanoid";
 import {
-	ChangeEventHandler,
 	DetailedHTMLProps,
 	HTMLAttributes,
 	ImgHTMLAttributes,
@@ -45,11 +44,17 @@ const ImageField = ({
 	const touchRippleRef = useRef<TouchRippleActions>(null);
 
 	useEffect(() => {
-		if (file) {
+		if (file && file instanceof File) {
 			setPreview(URL.createObjectURL(file));
-		} else {
-			setPreview(undefined);
+			return;
 		}
+
+		if (file) {
+			setPreview(file);
+			return;
+		}
+
+		setPreview(undefined);
 	}, [file]);
 
 	return (
