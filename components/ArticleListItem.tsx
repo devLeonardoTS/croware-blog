@@ -8,23 +8,15 @@ import { FaFeatherAlt } from "react-icons/fa";
 import Assets from "../helpers/constants/Assets";
 import { PageHrefs } from "../helpers/constants/PageHrefs";
 import useBreakpoints from "../hooks/useBreakpoints";
+import { ArticleData } from "../pages";
 import dftStyles from "./ArticleListItem.module.css";
 
-interface ArticleListItem {
-	article: any;
-}
+type ArticleListItem = {
+	article: ArticleData;
+};
 
 const ArticleListItem = ({ article }: ArticleListItem) => {
 	const [publishedAt, setPublishedAt] = useState("00/00/0000 00:00");
-
-	useEffect(() => {
-		if (article?.attributes?.publishedAt) {
-			const formattedDate = dayjs(article.attributes.publishedAt).format(
-				"DD/MM/YYYY HH:mm"
-			);
-			setPublishedAt(formattedDate);
-		}
-	}, [article]);
 
 	const winBp = useBreakpoints();
 
@@ -56,17 +48,27 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 		<ul className={dftStyles.tagsContainer}>{hashTags}</ul>
 	);
 
+	useEffect(() => {
+		if (article?.attributes?.publishedAt) {
+			const formattedDate = dayjs(article.attributes.publishedAt).format(
+				"DD/MM/YYYY HH:mm"
+			);
+			setPublishedAt(formattedDate);
+		}
+	}, [article]);
+
 	return (
 		<div className={dftStyles.container}>
 			<Link
 				href={
-					PageHrefs.articles + "/" + article?.attributes?.slug || PageHrefs.home
+					PageHrefs.articles + "/" + article?.attributes?.slug ||
+					PageHrefs.home
 				}
 			>
 				<a className={dftStyles.imgContainer}>
 					<Image
 						src={
-							picture.data?.attributes.url ||
+							picture?.data?.attributes.url ||
 							Assets.placeholder.article.thumbnail
 						}
 						layout="fill"
@@ -81,25 +83,39 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 				<div className={dftStyles.previewHead}>
 					<Link
 						href={
-							PageHrefs.articles + "/" + article?.attributes?.slug ||
-							PageHrefs.home
+							PageHrefs.articles +
+								"/" +
+								article?.attributes?.slug || PageHrefs.home
 						}
 					>
 						<a className={dftStyles.titleLink}>
-							<h2>{article?.attributes?.title || "Sem título..."}</h2>
+							<h2>
+								{article?.attributes?.title || "Sem título..."}
+							</h2>
 						</a>
 					</Link>
 				</div>
 				<div className={dftStyles.previewContent}>
-					<p>{article?.attributes?.content?.excerpt || "Sem resumo..."}</p>
+					<p>
+						{article?.attributes?.content?.excerpt ||
+							"Sem resumo..."}
+					</p>
 				</div>
 				<div className={dftStyles.previewFooter}>
 					<div className={dftStyles.infoContainer}>
 						<div className={dftStyles.author}>
-							<div className={dftStyles.icon}>
-								<FaFeatherAlt title="Autor(a)" />
-							</div>
-							<p>{author?.data?.attributes?.name || "Unknown"}</p>
+							<a
+								className={dftStyles.link}
+								href={
+									`${PageHrefs.authors}/${author?.data.attributes.slug}` ||
+									PageHrefs.home
+								}
+							>
+								<span className={dftStyles.icon}>
+									<FaFeatherAlt title="Autor(a)" />
+								</span>
+								{author?.data.attributes.name || "Unknown"}
+							</a>
 						</div>
 						<div className={dftStyles.time}>
 							<div className={dftStyles.icon}>

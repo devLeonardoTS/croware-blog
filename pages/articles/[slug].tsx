@@ -5,6 +5,7 @@ import { stringify } from "qs";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
+import { ArticleData } from "..";
 
 import Assets from "../../helpers/constants/Assets";
 import Endpoints from "../../helpers/constants/Endpoints";
@@ -14,127 +15,6 @@ import ownDOMPurify from "../../helpers/ownDOMPurify";
 import { ServerAxios } from "../../helpers/utilities/ServerAxios";
 import useNavigationStorage from "../../stores/NavigationStorage";
 import dftStyles from "../../styles/ArticlePage.module.css";
-
-export type ArticleData = {
-	id: number;
-	attributes: {
-		title: string;
-		slug: string;
-		createdAt: string;
-		updatedAt: string;
-		publishedAt: string;
-		content?: {
-			id: number;
-			excerpt: string;
-			body: string;
-		};
-		article_category?: {
-			data: {
-				id: number;
-				attributes: {
-					createdAt: string;
-					updatedAt: string;
-					publishedAt: string;
-					name: string;
-				};
-			};
-		};
-		article_hashtags?: {
-			data: Array<{
-				id: number;
-				attributes: {
-					tag: string;
-					createdAt: string;
-					updatedAt: string;
-					publishedAt: string;
-				};
-			}>;
-		};
-		picture?: {
-			data: null | {
-				id: number;
-				attributes: {
-					name: string;
-					alternativeText: string;
-					caption: string;
-					width: number;
-					height: number;
-					formats: {
-						small: {
-							name: string;
-							hash: string;
-							ext: string;
-							mime: string;
-							path: string | null;
-							width: number;
-							height: number;
-							size: number;
-							url: string;
-							provider_metadata: {
-								public_id: string;
-								resource_type: string;
-							};
-						};
-						thumbnail: {
-							name: string;
-							hash: string;
-							ext: string;
-							mime: string;
-							path: string | null;
-							width: number;
-							height: number;
-							size: number;
-							url: string;
-							provider_metadata: {
-								public_id: string;
-								resource_type: string;
-							};
-						};
-					};
-					hash: string;
-					ext: string;
-					mime: string;
-					size: number;
-					url: string;
-					previewUrl: string | null;
-					provider: string;
-					provider_metadata: {
-						public_id: string;
-						resource_type: string;
-					};
-					createdAt: string;
-					updatedAt: string;
-				};
-			};
-		};
-		author?: {
-			data: {
-				id: number;
-				attributes: {
-					name: string;
-					bio: string;
-					createdAt: string;
-					updatedAt: string;
-					publishedAt: string;
-					slug: string;
-				};
-			};
-		};
-		colaborators?: {
-			data: Array<{
-				id: number;
-				attributes: {
-					name: string;
-					bio: string;
-					createdAt: string;
-					updatedAt: string;
-					publishedAt: string;
-					slug: string;
-				};
-			}>;
-		};
-	};
-};
 
 type ArticlePageProps = {
 	article: ArticleData;
@@ -166,7 +46,7 @@ export const getServerSideProps: GetServerSideProps<
 		.then(response => response.data?.data?.[0])
 		.catch(error => {});
 
-	// console.log("[articles:getSSProps] - Result...", result);
+	// console.log("[ArticlePage:getSSProps] - Result...", result);
 
 	if (!result) {
 		return { notFound: true };

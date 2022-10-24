@@ -1,41 +1,177 @@
 import type { GetServerSideProps, NextPage } from "next";
+import { stringify } from "qs";
 import { Fragment, useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
-import { SS_MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
+import Endpoints from "../helpers/constants/Endpoints";
+import { ServerAxios } from "../helpers/utilities/ServerAxios";
 import useNavigationStorage from "../stores/NavigationStorage";
 import dftStyles from "../styles/Home.module.css";
 
+export type ArticleData = {
+	id: number;
+	attributes: {
+		title: string;
+		slug: string;
+		createdAt: string;
+		updatedAt: string;
+		publishedAt: string;
+		content?: {
+			id: number;
+			excerpt: string;
+			body: string;
+		};
+		article_category?: {
+			data: {
+				id: number;
+				attributes: {
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					name: string;
+				};
+			};
+		};
+		article_hashtags?: {
+			data: Array<{
+				id: number;
+				attributes: {
+					tag: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+				};
+			}>;
+		};
+		picture?: {
+			data: null | {
+				id: number;
+				attributes: {
+					name: string;
+					alternativeText: string;
+					caption: string;
+					width: number;
+					height: number;
+					formats: {
+						small: {
+							name: string;
+							hash: string;
+							ext: string;
+							mime: string;
+							path: string | null;
+							width: number;
+							height: number;
+							size: number;
+							url: string;
+							provider_metadata: {
+								public_id: string;
+								resource_type: string;
+							};
+						};
+						thumbnail: {
+							name: string;
+							hash: string;
+							ext: string;
+							mime: string;
+							path: string | null;
+							width: number;
+							height: number;
+							size: number;
+							url: string;
+							provider_metadata: {
+								public_id: string;
+								resource_type: string;
+							};
+						};
+					};
+					hash: string;
+					ext: string;
+					mime: string;
+					size: number;
+					url: string;
+					previewUrl: string | null;
+					provider: string;
+					provider_metadata: {
+						public_id: string;
+						resource_type: string;
+					};
+					createdAt: string;
+					updatedAt: string;
+				};
+			};
+		};
+		author?: {
+			data: {
+				id: number;
+				attributes: {
+					name: string;
+					bio: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					slug: string;
+				};
+			};
+		};
+		colaborators?: {
+			data: Array<{
+				id: number;
+				attributes: {
+					name: string;
+					bio: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					slug: string;
+				};
+			}>;
+		};
+	};
+};
+
 type HomeProps = {
-	articles: any;
+	articles: Array<ArticleData>;
 };
 
-export const getServerSideProps: GetServerSideProps = async context => {
-	const url = `${SS_MAIN_API_BASEURL}/api/articles?populate=*&sort=publishedAt:desc`;
+export const getServerSideProps: GetServerSideProps<
+	HomeProps
+> = async context => {
+	const slug = context.params?.slug;
 
-	try {
-		const res = await fetch(url);
-		const data = await res.json();
-
-		if (!data) {
-			return { props: {} };
+	const query = stringify(
+		{
+			populate: "*",
+			filters: {
+				slug: {
+					$eqi: slug,
+				},
+			},
+			sort: ["publishedAt:desc"],
+		},
+		{
+			encodeValuesOnly: true,
 		}
+	);
 
-		return {
-			props: { articles: data },
-		};
-	} catch {
-		return {
-			props: {},
-		};
-	}
+	const url = `${Endpoints.articles}?${query}`;
+
+	const result = await ServerAxios.client
+		.get<{ data: Array<ArticleData> }>(url)
+		.then(response => response.data?.data)
+		.catch(error => {
+			return [];
+		});
+
+	return {
+		props: { articles: result },
+	};
 };
 
-const tempArticles = (articles: any) => {
+const tempArticles = (articles?: Array<ArticleData>) => {
 	if (!articles || articles?.length < 1) {
 		return <li key="no-article-0">No articles available...</li>;
 	}
 
-	const articleItems = articles.map((article: any, index: number) => {
+	const articleItems = articles.map((article, index) => {
 		const lastIndex = articles.length > 0 ? articles.length - 1 : 0;
 		const isLastItem = index === lastIndex;
 
@@ -55,8 +191,6 @@ const tempArticles = (articles: any) => {
 const Home: NextPage<HomeProps> = ({ articles }) => {
 	// console.log(articles);
 
-	const articlesList = articles?.data;
-	const articlesMeta = articles?.meta;
 	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
 
 	useEffect(() => {
@@ -74,7 +208,7 @@ const Home: NextPage<HomeProps> = ({ articles }) => {
 					<hr className={dftStyles.divider} />
 
 					<ul className={dftStyles.articlesList}>
-						{tempArticles(articlesList)}
+						{tempArticles(articles)}
 					</ul>
 				</section>
 			</div>
