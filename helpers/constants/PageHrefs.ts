@@ -1,4 +1,5 @@
 export const PageHrefs = {
     home: "/",
-    articles: "articles"
+    articles: "/articles",
+    authors: "/authors",
 }

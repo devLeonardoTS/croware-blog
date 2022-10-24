@@ -17,7 +17,7 @@ import useNavigationStorage from "../../stores/NavigationStorage";
 import useUserSession, { SessionAuthor } from "../../stores/UserSessionStore";
 import dftStyles from "../../styles/AuthorsProfile.module.css";
 
-type AuthorData = {
+export type AuthorData = {
 	id: number;
 	attributes: {
 		name: string;
@@ -27,7 +27,7 @@ type AuthorData = {
 		publishedAt: string;
 		slug: string;
 		picture?: {
-			data: {
+			data: null | {
 				id: number;
 				attributes: {
 					name: string;
@@ -99,7 +99,7 @@ type AuthorData = {
 			};
 		};
 		banner?: {
-			data: {
+			data: null | {
 				id: number;
 				attributes: {
 					name: string;
@@ -296,14 +296,15 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 						<div className={dftStyles.banner}>
 							<img
 								src={
-									author.attributes?.banner?.data.attributes.url ||
+									author.attributes.banner?.data?.attributes
+										.url ||
 									Assets.placeholder.profile.banner
 								}
 								width={"100%"}
 								height={"100%"}
 								alt="User profile's banner"
 							/>
-							{isAuthenticated && userAuthor?.id === author.id && (
+							{isAuthenticated && userAuthor?.id === author.id ? (
 								<menu className={dftStyles.bannerIconContainer}>
 									<li key="author-menu">
 										<>
@@ -313,12 +314,20 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 												}}
 												aria-label={"Author's menu"}
 												aria-controls={
-													isOwnerMenuOpen ? "author-menu" : undefined
+													isOwnerMenuOpen
+														? "author-menu"
+														: undefined
 												}
 												aria-haspopup={"true"}
-												aria-expanded={isOwnerMenuOpen ? "true" : undefined}
+												aria-expanded={
+													isOwnerMenuOpen
+														? "true"
+														: undefined
+												}
 												onClick={ev => {
-													setOwnerMenuAnchor(ev.currentTarget);
+													setOwnerMenuAnchor(
+														ev.currentTarget
+													);
 												}}
 											>
 												<FaCog />
@@ -326,22 +335,27 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 											{
 												<AuthorMenuDialog
 													isOpen={isOwnerMenuOpen}
-													onClose={closeOwnerDialogMenu}
-													customPanelSetter={setCustomPanel}
+													onClose={
+														closeOwnerDialogMenu
+													}
+													customPanelSetter={
+														setCustomPanel
+													}
 													anchorEl={ownerMenuAnchor}
 												/>
 											}
 										</>
 									</li>
 								</menu>
-							)}
+							) : null}
 						</div>
 						<div className={dftStyles.content}>
 							<div className={dftStyles.userPictureContainer}>
 								<div className={dftStyles.picture}>
 									<img
 										src={
-											author.attributes?.picture?.data.attributes.url ||
+											author.attributes.picture?.data
+												?.attributes.url ||
 											Assets.placeholder.profile.picture
 										}
 										width={"100%"}
@@ -352,13 +366,17 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 							</div>
 							<div className={dftStyles.userDetailsContainer}>
 								<div className={dftStyles.head}>
-									<h1>{author.attributes.name || "Nome do Autor"}</h1>
+									<h1>
+										{author.attributes.name ||
+											"Nome do Autor"}
+									</h1>
 								</div>
 								<div
 									className={dftStyles.body}
 									dangerouslySetInnerHTML={{
 										__html:
-											author.attributes.bio || "<p>Biografia do autor</p>",
+											author.attributes.bio ||
+											"<p>Biografia do autor</p>",
 									}}
 								></div>
 							</div>
@@ -381,14 +399,16 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 						>
 							<Tab label="Artigos" />
 							<Tab label="Colaborações" />
-							{isAuthenticated && userAuthor?.id === author.id && (
+							{isAuthenticated && userAuthor?.id === author.id ? (
 								<Tab label="Artigos Armazenados" />
-							)}
+							) : null}
 						</Tabs>
 					</div>
 				</div>
 
-				<div className={dftStyles.tabPanel}>{currentPanel || customPanel}</div>
+				<div className={dftStyles.tabPanel}>
+					{currentPanel || customPanel}
+				</div>
 			</div>
 		</main>
 	);

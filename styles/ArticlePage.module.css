@@ -65,6 +65,21 @@
 	@apply border-r-2 border-white h-full;
 }
 
+.metaInfo .author .link {
+	@apply flex gap-2 items-center;
+	@apply border-b-2 border-opacity-0 border-transparent;
+	@apply transition-all ease-in-out duration-300;
+}
+.metaInfo .author .link:hover {
+	@apply text-clr-accent;
+}
+.metaInfo .author .link .icon svg {
+	@apply transition-all ease-in-out duration-300;
+}
+.metaInfo .author .link:hover .icon svg {
+	@apply fill-clr-accent;
+}
+
 .metaInfo .time {
 	@apply flex items-center gap-2;
 }

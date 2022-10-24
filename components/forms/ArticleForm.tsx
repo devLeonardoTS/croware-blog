@@ -91,7 +91,7 @@ const getColaborators = async () => {
 };
 
 type ArticleActionArgs = {
-	authorId: string;
+	authorId: number;
 	values: ArticleFormDataType;
 };
 
@@ -139,7 +139,7 @@ const createArticleHandler = async ({
 };
 
 type ArticleUpdateArgs = {
-	authorId: string;
+	authorId: number;
 	initial: any;
 	updated: ArticleFormDataType;
 };
@@ -203,7 +203,7 @@ type ImageUploadHandlerArgs = {
 };
 
 const uploadImageHandler = async ({ file }: ImageUploadHandlerArgs) => {
-	console.log("[ArticleForm:uploadImageHandler] - Starting...", file);
+	// console.log("[ArticleForm:uploadImageHandler] - Starting...", file);
 
 	const endPoint = `/api/upload`;
 
@@ -215,7 +215,7 @@ const uploadImageHandler = async ({ file }: ImageUploadHandlerArgs) => {
 		.then(response => response.data);
 	// array of files;
 
-	console.log("[ArticleForm:uploadImageHandler] - Done...", result);
+	// console.log("[ArticleForm:uploadImageHandler] - Done...", result);
 
 	return result;
 };

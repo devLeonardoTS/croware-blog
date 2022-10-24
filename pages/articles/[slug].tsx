@@ -1,52 +1,184 @@
 import dayjs from "dayjs";
+import { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
+import { stringify } from "qs";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
 
 import Assets from "../../helpers/constants/Assets";
+import Endpoints from "../../helpers/constants/Endpoints";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
+import { PageHrefs } from "../../helpers/constants/PageHrefs";
 import ownDOMPurify from "../../helpers/ownDOMPurify";
+import { ServerAxios } from "../../helpers/utilities/ServerAxios";
 import useNavigationStorage from "../../stores/NavigationStorage";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
-import type { GetServerSideProps, NextPage } from "next";
-type ArticlePageProps = {
-	article: any;
+export type ArticleData = {
+	id: number;
+	attributes: {
+		title: string;
+		slug: string;
+		createdAt: string;
+		updatedAt: string;
+		publishedAt: string;
+		content?: {
+			id: number;
+			excerpt: string;
+			body: string;
+		};
+		article_category?: {
+			data: {
+				id: number;
+				attributes: {
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					name: string;
+				};
+			};
+		};
+		article_hashtags?: {
+			data: Array<{
+				id: number;
+				attributes: {
+					tag: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+				};
+			}>;
+		};
+		picture?: {
+			data: null | {
+				id: number;
+				attributes: {
+					name: string;
+					alternativeText: string;
+					caption: string;
+					width: number;
+					height: number;
+					formats: {
+						small: {
+							name: string;
+							hash: string;
+							ext: string;
+							mime: string;
+							path: string | null;
+							width: number;
+							height: number;
+							size: number;
+							url: string;
+							provider_metadata: {
+								public_id: string;
+								resource_type: string;
+							};
+						};
+						thumbnail: {
+							name: string;
+							hash: string;
+							ext: string;
+							mime: string;
+							path: string | null;
+							width: number;
+							height: number;
+							size: number;
+							url: string;
+							provider_metadata: {
+								public_id: string;
+								resource_type: string;
+							};
+						};
+					};
+					hash: string;
+					ext: string;
+					mime: string;
+					size: number;
+					url: string;
+					previewUrl: string | null;
+					provider: string;
+					provider_metadata: {
+						public_id: string;
+						resource_type: string;
+					};
+					createdAt: string;
+					updatedAt: string;
+				};
+			};
+		};
+		author?: {
+			data: {
+				id: number;
+				attributes: {
+					name: string;
+					bio: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					slug: string;
+				};
+			};
+		};
+		colaborators?: {
+			data: Array<{
+				id: number;
+				attributes: {
+					name: string;
+					bio: string;
+					createdAt: string;
+					updatedAt: string;
+					publishedAt: string;
+					slug: string;
+				};
+			}>;
+		};
+	};
 };
 
-export const getServerSideProps: GetServerSideProps = async context => {
+type ArticlePageProps = {
+	article: ArticleData;
+};
+
+export const getServerSideProps: GetServerSideProps<
+	ArticlePageProps
+> = async context => {
 	const slug = context.params?.slug;
-	const url = `${API_ARTICLES}?filters[slug]=${slug}&populate=*`;
 
-	try {
-		const res = await fetch(url);
-		const jsonData = await res.json();
-		const data = jsonData.data;
-
-		if (!jsonData || !data || data.length < 1) {
-			return { notFound: true };
+	const query = stringify(
+		{
+			populate: "*",
+			filters: {
+				slug: {
+					$eqi: slug,
+				},
+			},
+		},
+		{
+			encodeValuesOnly: true,
 		}
+	);
 
-		return {
-			props: { article: jsonData },
-		};
-	} catch {
-		return {
-			notFound: true,
-		};
+	const url = `${Endpoints.articles}?${query}`;
+
+	const result = await ServerAxios.client
+		.get<{ data: Array<ArticleData> }>(url)
+		.then(response => response.data?.data?.[0])
+		.catch(error => {});
+
+	// console.log("[articles:getSSProps] - Result...", result);
+
+	if (!result) {
+		return { notFound: true };
 	}
+
+	return {
+		props: { article: result },
+	};
 };
 
 const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
-
-	const artData = article?.data?.[0];
-	const artMeta = article?.meta;
-
-	const dftAttributes = {
-		dataError: true,
-	};
 
 	const {
 		title,
@@ -58,8 +190,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 		author,
 		publishedAt,
 		updatedAt,
-		dataError,
-	} = artData?.attributes || dftAttributes; // "safe" destructuring - All destructures will be undefined if not available.
+	} = article?.attributes || {}; // "safe" destructuring - All destructures will be undefined if article not available.
 
 	// console.log("Article Data: ", article?.data);
 
@@ -100,13 +231,20 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	}, [content]);
 
 	useEffect(() => {
-		setCurrentNavLink("artigos");
-	}, [setCurrentNavLink]);
+		console.log("Artigle title", title);
+		setCurrentNavLink("artigos", { title: title });
+	}, [setCurrentNavLink, title]);
 
-	if (dataError) {
+	if (!article?.attributes) {
 		return (
-			<main className={`${dftStyles.container} items-center justify-center`}>
-				<h1>Loading...</h1>
+			<main
+				className={`${dftStyles.container} items-center justify-center`}
+			>
+				<h1>
+					{
+						"Não foi possível encontrar os dados do artigo, tente novamente mais tarde."
+					}
+				</h1>
 			</main>
 		);
 	}
@@ -127,10 +265,19 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						<div className={dftStyles.footer}>
 							<div className={dftStyles.metaInfo}>
 								<div className={dftStyles.author}>
-									<div className={dftStyles.icon}>
-										<FaFeatherAlt title="Autor(a)" />
-									</div>
-									<p>{author?.data?.attributes?.name || "Unknown"}</p>
+									<a
+										className={dftStyles.link}
+										href={
+											`${PageHrefs.authors}/${author?.data.attributes.slug}` ||
+											PageHrefs.home
+										}
+									>
+										<span className={dftStyles.icon}>
+											<FaFeatherAlt title="Autor(a)" />
+										</span>
+										{author?.data.attributes.name ||
+											"Unknown"}
+									</a>
 								</div>
 								<div className={dftStyles.time}>
 									<div className={dftStyles.icon}>

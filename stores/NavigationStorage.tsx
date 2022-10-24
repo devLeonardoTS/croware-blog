@@ -93,9 +93,9 @@ const useNavigationStorage = create<MainNavigationType>()(
 				}
 
 				const oldCurrent = get().current;
-				const loweredCurrentName = get().current.name.toLowerCase();
+				const currentPath = window?.location?.pathname;
 
-				if (loweredCurrentName === loweredName) {
+				if (oldCurrent.path === currentPath) {
 					return;
 				}
 
@@ -173,7 +173,9 @@ const useNavigationStorage = create<MainNavigationType>()(
 			getStorage: () => localStorage,
 			partialize: state => {
 				return Object.fromEntries(
-					Object.entries(state).filter(([key]) => !["mainLinks"].includes(key))
+					Object.entries(state).filter(
+						([key]) => !["mainLinks"].includes(key)
+					)
 				);
 			},
 		}
