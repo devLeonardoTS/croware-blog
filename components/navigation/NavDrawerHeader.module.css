@@ -27,6 +27,7 @@
 	@apply text-sm lowercase first-letter:uppercase;
 	@apply hover:text-clr-accent;
 	@apply border-b-2 border-opacity-100 border-clr-accent;
+	@apply max-w-[100px] overflow-hidden whitespace-nowrap text-ellipsis;
 }
 
 .bannerContainer .bannerOverlay .greetings {

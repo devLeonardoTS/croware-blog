@@ -23,7 +23,7 @@ type SessionUser = {
 };
 
 export type SessionAuthor = {
-	id: string;
+	id: number;
 	name: string;
 	bio: string;
 	picture: string;

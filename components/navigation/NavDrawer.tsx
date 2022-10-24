@@ -20,7 +20,7 @@ type NavDrawerProps = {
 };
 
 const authorDefaults: SessionAuthor = {
-	id: "",
+	id: -1,
 	name: "Author's name",
 	bio: "Author's bio",
 	banner: "",
@@ -90,7 +90,7 @@ const NavDrawer = ({
 						)}
 						{isAuthenticated && (
 							<DrawerUserInfo
-								user={author.name}
+								author={author}
 								signOutHandler={() => {
 									const isAllowed = confirm("Tem certeza que deseja sair?");
 									if (!isAllowed) {

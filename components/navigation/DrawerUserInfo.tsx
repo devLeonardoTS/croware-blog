@@ -1,20 +1,21 @@
+import { SessionAuthor } from "../../stores/UserSessionStore";
 import OutlinedButton from "../forms/buttons/OutlinedButton";
 import dftStyles from "./DrawerUserInfo.module.css";
 
 type DrawerUserInfoProps = {
-	user: string;
+	author: SessionAuthor;
 	signOutHandler: () => Promise<void> | void;
 };
 
-const DrawerUserInfo = ({ user, signOutHandler }: DrawerUserInfoProps) => {
+const DrawerUserInfo = ({ author, signOutHandler }: DrawerUserInfoProps) => {
 	return (
 		<div className={dftStyles.container}>
 			<div className={dftStyles.content}>
 				<div className={dftStyles.info}>
-					<p>{user}</p>
+					<p>{author.name}</p>
 				</div>
 				<div className={dftStyles.actions}>
-					<a href={"/authors/profile"}>
+					<a href={`/authors/${author.slug}`}>
 						<OutlinedButton>{"Dashboard"}</OutlinedButton>
 					</a>
 					<OutlinedButton onClick={signOutHandler}>{"Sair"}</OutlinedButton>

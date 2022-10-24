@@ -24,7 +24,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 			<StyledEngineProvider injectFirst>
 				<Layout>
 					<Head>
-						<title>{`Croware-Tech Blog - ${currentPage.name}`}</title>
+						<title>{`Croware-Tech Blog - ${currentPage.name}${
+							currentPage.title ? ` - ${currentPage.title}` : ""
+						}`}</title>
 						<meta
 							name="description"
 							content="Croware-tech Blog - All things digital technology."

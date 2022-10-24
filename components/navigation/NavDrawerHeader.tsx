@@ -38,7 +38,15 @@ const NavDrawerHeader = ({
 				/>
 				<div className={dftStyles.bannerOverlay}>
 					<div className={dftStyles.title}>
-						<a href={currentLink.path}>{currentLink.name}</a>
+						<Tooltip
+							muiTooltipProps={{
+								title: currentLink.name,
+								placement: "bottom-start",
+								arrow: true,
+							}}
+						>
+							<a href={currentLink.path}>{currentLink.name}</a>
+						</Tooltip>
 					</div>
 					<div className={dftStyles.greetings}>
 						<p>{"Bem-vindo(a)"}</p>

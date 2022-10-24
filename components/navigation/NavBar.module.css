@@ -43,6 +43,8 @@
 	@apply transition-all ease-in-out duration-300;
 	@apply hover:text-clr-accent;
 	@apply md:hidden;
+	@apply overflow-hidden;
+	@apply max-w-[100px] whitespace-nowrap text-ellipsis;
 }
 
 .linksGroup .buttons {

@@ -9,6 +9,7 @@ import STORAGE_KEYS from "./StorageKeys";
 export type NavLinkType = {
 	id: string;
 	name: string;
+	title: string;
 	path: string;
 	hidden: boolean;
 };
@@ -19,15 +20,21 @@ export type MainNavStateType = {
 	current: NavLinkType;
 };
 
+export type NavLinkMakerArgs = {
+	title?: string;
+	path?: string;
+	hidden?: boolean;
+};
+export type NavLinkMaker = (
+	name: string,
+	args?: NavLinkMakerArgs
+) => Promise<NavLinkType> | NavLinkType;
+
 type MainNavigationType = {
 	mainLinks: NavLinkType[];
 	previous: NavLinkType;
 	current: NavLinkType;
-	setCurrentNavLink: (
-		name: string,
-		path?: string,
-		hidden?: boolean
-	) => Promise<void> | void;
+	setCurrentNavLink: NavLinkMaker;
 	hideAll: () => Promise<void> | void;
 	showAll: () => Promise<void> | void;
 	hideLink: (name: string) => Promise<void> | void;
@@ -36,8 +43,8 @@ type MainNavigationType = {
 
 // Helpers
 
-export const mkNavLink = (name: string, path?: string, hidden?: boolean) => {
-	let shouldHide = hidden;
+export const mkNavLink: NavLinkMaker = (name, args) => {
+	let shouldHide = args?.hidden;
 	switch (typeof shouldHide) {
 		case "boolean":
 			shouldHide = shouldHide;
@@ -50,7 +57,8 @@ export const mkNavLink = (name: string, path?: string, hidden?: boolean) => {
 	const link: NavLinkType = {
 		id: nanoid(),
 		name,
-		path: path || window.location.pathname,
+		title: args?.title || "",
+		path: args?.path || window.location.pathname,
 		hidden: shouldHide,
 	};
 
@@ -60,10 +68,10 @@ export const mkNavLink = (name: string, path?: string, hidden?: boolean) => {
 // Constants
 
 const MAIN_NAV_LINKS = [
-	mkNavLink("Artigos", "/"),
-	mkNavLink("Eventos", "/events"),
-	mkNavLink("Projetos", "/projects"),
-	mkNavLink("Sobre", "/about", true),
+	mkNavLink("Artigos", { path: "/" }),
+	mkNavLink("Eventos", { path: "/events" }),
+	mkNavLink("Projetos", { path: "/projects" }),
+	mkNavLink("Sobre", { path: "/about", hidden: true }),
 ];
 
 const useNavigationStorage = create<MainNavigationType>()(
@@ -72,8 +80,7 @@ const useNavigationStorage = create<MainNavigationType>()(
 		(set, get) => {
 			const setCurrentNavLink = async (
 				name: string,
-				path?: string,
-				hidden?: boolean
+				args?: NavLinkMakerArgs
 			) => {
 				if (typeof name !== "string") {
 					return;
@@ -95,7 +102,11 @@ const useNavigationStorage = create<MainNavigationType>()(
 				const sanitizedName =
 					loweredName[0].toUpperCase() + loweredName.slice(1);
 
-				const current = mkNavLink(sanitizedName, path, hidden);
+				const current = await mkNavLink(sanitizedName, {
+					title: args?.title,
+					path: args?.path,
+					hidden: args?.hidden,
+				});
 
 				set({
 					previous: oldCurrent,

@@ -2,7 +2,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { Fragment, useEffect } from "react";
 import ArticleListItem from "../components/ArticleListItem";
 import { SS_MAIN_API_BASEURL } from "../helpers/constants/getEnvVars";
-import useNavigationStorage, { mkNavLink } from "../stores/NavigationStorage";
+import useNavigationStorage from "../stores/NavigationStorage";
 import dftStyles from "../styles/Home.module.css";
 
 type HomeProps = {

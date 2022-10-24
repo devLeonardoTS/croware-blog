@@ -7,6 +7,7 @@ import Assets from "../../helpers/constants/Assets";
 import useNavigationStorage, {
 	MainNavStateType,
 } from "../../stores/NavigationStorage";
+import Tooltip from "../Tooltip";
 import LinksBar from "./LinksBar";
 import dftStyles from "./NavBar.module.css";
 import NavDrawer from "./NavDrawer";
@@ -54,9 +55,17 @@ const NavBar = ({}: NavbarProps) => {
 						className: dftStyles.linksBarItems,
 					}}
 				/>
-				<a href={navData?.current.path} className={dftStyles.current}>
-					{navData?.current.name}
-				</a>
+				<Tooltip
+					muiTooltipProps={{
+						title: navData?.current.name,
+						placement: "bottom-start",
+						arrow: true,
+					}}
+				>
+					<a href={navData?.current.path} className={dftStyles.current}>
+						{navData?.current.name}
+					</a>
+				</Tooltip>
 				<div className={dftStyles.buttons}>
 					<IconButton
 						onClick={() => setIsDrawerOpen(true)}
