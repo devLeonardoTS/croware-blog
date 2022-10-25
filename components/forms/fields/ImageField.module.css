@@ -1,0 +1,30 @@
+.formControl {
+	@apply rounded overflow-hidden w-full;
+}
+
+.formControl button {
+	@apply p-0 h-full w-full;
+}
+
+/* Must be full width and height - It contains the figure and image and works to trigger the hidden input for files */
+.formControl label {
+	@apply w-full h-full;
+	@apply hover:cursor-pointer;
+}
+
+.formControl figure {
+	@apply relative w-full h-full;
+}
+
+.formControl figure img {
+	@apply h-full w-full object-cover object-center;
+}
+
+.formControl legend {
+	@apply absolute bottom-0;
+	@apply p-1 bg-clr-primary bg-opacity-80;
+	writing-mode: vertical-lr;
+	letter-spacing: 0.25em;
+	transform: rotate(180deg);
+	height: 100%;
+}

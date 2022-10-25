@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: [
@@ -15,6 +17,8 @@ module.exports = {
 			"clr-primary": "#221f1f",
 			"clr-secondary": "#f2f4f4",
 			"clr-accent": "#ef4444",
+			"clr-info": colors.blue[500],
+			"clr-error": colors.red[700],
 		},
 	},
 	plugins: [require("flowbite/plugin"), require("@tailwindcss/line-clamp")],

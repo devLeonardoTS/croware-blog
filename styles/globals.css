@@ -16,7 +16,7 @@
 html,
 body {
 	min-height: 100%;
-	background-image: url("https://res.cloudinary.com/devlts/image/upload/v1661554823/black_scales_mjj4j7.webp");
+	background-image: url("/assets/black-scales-pattern.webp");
 	background-repeat: repeat;
 }
 
@@ -24,11 +24,6 @@ table,
 td {
 	border: none;
 	border-style: none;
-}
-
-ol,
-ul {
-	list-style: none;
 }
 
 h1 {
@@ -41,13 +36,25 @@ h3 {
 	@apply text-lg;
 }
 
+ul,
+ol,
+menu {
+	list-style: none;
+}
+
 p,
 strong,
 i,
 a {
 	@apply text-sm;
+	color: inherit;
 }
 
 small {
 	@apply text-xs;
+}
+
+u,
+s {
+	all: revert;
 }

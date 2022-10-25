@@ -1,0 +1,6 @@
+.tooltip {
+	@apply bg-clr-primary bg-opacity-50;
+}
+.tooltipArrow {
+	@apply text-clr-primary opacity-50;
+}

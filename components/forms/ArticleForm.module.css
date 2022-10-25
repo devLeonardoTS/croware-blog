@@ -1,0 +1,34 @@
+.container {
+}
+
+.content {
+}
+
+.form {
+	@apply flex flex-col gap-4 px-4;
+}
+
+.form .inputGroup {
+	@apply flex flex-col gap-4;
+}
+
+.form .inputGroup .row {
+	@apply flex gap-4;
+}
+
+.form .actions {
+	@apply flex gap-2 justify-end;
+}
+
+.imageInput {
+	@apply aspect-video m-auto max-w-screen-sm;
+}
+
+.field {
+}
+
+.editor {
+}
+
+.modalContainer {
+}

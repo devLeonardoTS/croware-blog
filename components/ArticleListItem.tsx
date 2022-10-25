@@ -1,29 +1,22 @@
-import React, { useEffect, useState } from "react";
-import dftStyles from "./ArticleListItem.module.css";
+import dayjs from "dayjs";
 import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
-import useBreakpoints from "../hooks/useBreakpoints";
-import dayjs from "dayjs";
-import Link from "next/link";
-import { HREF_ARTICLES, HREF_HOME } from "../helpers/constants/hrefBases";
-import { IMG_ARTICLE_PLACEHOLDER } from "../helpers/constants/assetUrls";
 
-interface ArticleListItem {
-	article: any;
-}
+import Assets from "../helpers/constants/Assets";
+import { PageHrefs } from "../helpers/constants/PageHrefs";
+import useBreakpoints from "../hooks/useBreakpoints";
+import { ArticleData } from "../pages";
+import dftStyles from "./ArticleListItem.module.css";
+
+type ArticleListItem = {
+	article: ArticleData;
+};
 
 const ArticleListItem = ({ article }: ArticleListItem) => {
-	const [publishedAt, setPublishedAt] = useState("00/00/0000 00:00");
-
-	useEffect(() => {
-		if (article?.attributes?.publishedAt) {
-			const formattedDate = dayjs(article.attributes.publishedAt).format(
-				"DD/MM/YYYY HH:mm"
-			);
-			setPublishedAt(formattedDate);
-		}
-	}, [article]);
+	const [publishedAt, setPublishedAt] = useState<string>();
 
 	const winBp = useBreakpoints();
 
@@ -55,12 +48,29 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 		<ul className={dftStyles.tagsContainer}>{hashTags}</ul>
 	);
 
+	useEffect(() => {
+		if (article?.attributes?.publishedAt) {
+			const formattedDate = dayjs(article.attributes.publishedAt).format(
+				"DD/MM/YYYY HH:mm"
+			);
+			setPublishedAt(formattedDate);
+		}
+	}, [article]);
+
 	return (
 		<div className={dftStyles.container}>
-			<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+			<Link
+				href={
+					PageHrefs.articles + "/" + article?.attributes?.slug ||
+					PageHrefs.home
+				}
+			>
 				<a className={dftStyles.imgContainer}>
 					<Image
-						src={picture.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
+						src={
+							picture?.data?.attributes.url ||
+							Assets.placeholder.article.thumbnail
+						}
 						layout="fill"
 						className={dftStyles.image}
 						alt="An image representing the article context."
@@ -71,28 +81,47 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 
 			<div className={dftStyles.previewContainer}>
 				<div className={dftStyles.previewHead}>
-					<Link href={HREF_ARTICLES + article?.attributes?.slug || HREF_HOME}>
+					<Link
+						href={
+							PageHrefs.articles +
+								"/" +
+								article?.attributes?.slug || PageHrefs.home
+						}
+					>
 						<a className={dftStyles.titleLink}>
-							<h2>{article?.attributes?.title || "Sem título..."}</h2>
+							<h2>
+								{article?.attributes?.title || "Sem título..."}
+							</h2>
 						</a>
 					</Link>
 				</div>
 				<div className={dftStyles.previewContent}>
-					<p>{article?.attributes?.content?.excerpt || "Sem resumo..."}</p>
+					<p>
+						{article?.attributes?.content?.excerpt ||
+							"Sem resumo..."}
+					</p>
 				</div>
 				<div className={dftStyles.previewFooter}>
 					<div className={dftStyles.infoContainer}>
 						<div className={dftStyles.author}>
-							<div className={dftStyles.icon}>
-								<FaFeatherAlt title="Autor(a)" />
-							</div>
-							<p>{author?.data?.attributes?.name || "Unknown"}</p>
+							<a
+								className={dftStyles.link}
+								href={
+									`${PageHrefs.authors}/${author?.data.attributes.slug}` ||
+									PageHrefs.home
+								}
+							>
+								<span className={dftStyles.icon}>
+									<FaFeatherAlt title="Autor(a)" />
+								</span>
+								{author?.data.attributes.name || "Unknown"}
+							</a>
 						</div>
 						<div className={dftStyles.time}>
 							<div className={dftStyles.icon}>
 								<BsClockFill title="Data de publicação" />
 							</div>
-							<p>{publishedAt}</p>
+							{publishedAt ? <p>{publishedAt}</p> : null}
 						</div>
 					</div>
 					{!winBp.isBase && !winBp.isSm && hashTagList()}

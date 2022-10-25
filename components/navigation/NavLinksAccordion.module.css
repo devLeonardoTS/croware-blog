@@ -1,0 +1,22 @@
+.button {
+	@apply flex justify-between p-2;
+}
+
+.button .title {
+	@apply flex items-center;
+}
+
+.button .title .icon {
+	@apply min-w-[32px];
+}
+
+.linksList .link {
+	@apply flex gap-4 px-4;
+}
+
+.linksList .link .addorn {
+	@apply min-h-full w-[1px] rounded-sm bg-clr-info;
+}
+.linksList .link .addorn[data-active="true"] {
+	@apply min-h-full w-[4px] rounded-sm bg-clr-accent;
+}

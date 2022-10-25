@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 import dftStyles from "./Footer.module.css";
 
@@ -12,11 +11,9 @@ export default function Footer() {
 					}}
 				>
 					© 2022 -{" "}
-					<Link href="https://github.com/croware-tech">
-						<a>
-							<small>Croware-tech</small>
-						</a>
-					</Link>
+					<a href="https://github.com/devLeonardoTS/croware-blog">
+						<small>Croware-tech</small>
+					</a>
 					.
 				</small>
 			</div>

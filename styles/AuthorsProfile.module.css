@@ -1,0 +1,95 @@
+.container {
+	@apply flex flex-col grow;
+}
+
+.contentContainer {
+	@apply flex flex-col max-w-screen-md w-full py-4 mx-auto gap-4;
+}
+
+.profileContainer {
+	@apply bg-clr-primary;
+}
+
+.profileContainer > .head {
+	@apply p-4;
+}
+
+.profileContainer .banner {
+	@apply relative w-full h-[136px] overflow-hidden rounded-sm;
+}
+
+.profileContainer .banner img {
+	@apply object-cover object-center h-full;
+}
+
+.profileContainer .banner .bannerIconContainer {
+	@apply flex flex-col gap-2;
+	@apply absolute bottom-0 right-0;
+	@apply h-full w-10;
+	@apply bg-black bg-opacity-50;
+}
+
+.profileContainer .banner .bannerIconContainer .bannerIcon {
+	@apply aspect-square !important;
+}
+
+.profileContainer .banner .bannerIconContainer .bannerIcon svg {
+	@apply hover:fill-clr-accent;
+	@apply active:fill-clr-accent;
+}
+
+.profileContainer .content {
+	@apply flex flex-col gap-2;
+}
+
+/* Width of ".userPicture" ".img" must be the same! */
+.profileContainer .content .userPictureContainer {
+	@apply relative h-[54px] w-[120px];
+	@apply self-center;
+}
+
+.profileContainer .content .userPictureContainer .picture {
+	@apply absolute bottom-[0px] overflow-hidden;
+	@apply w-[120px] h-[120px];
+	@apply border-[4px] rounded-full;
+	@apply border-clr-primary border-opacity-95 bg-clr-primary bg-opacity-95;
+}
+
+.profileContainer .content .userPictureContainer img {
+	/* @apply border-[4px] rounded-full; */
+	@apply object-contain object-center;
+}
+
+.profileContainer .content .userDetailsContainer {
+	@apply flex flex-col gap-4;
+}
+
+.profileContainer .content .userDetailsContainer .head {
+	@apply text-center;
+	text-shadow: 0 0 6px black, 0 0 6px black, 0 0 6px black, 0 0 6px black;
+}
+
+.profileContainer .content .userDetailsContainer .body {
+	@apply text-center my-4;
+}
+
+.tabsContainer {
+	@apply flex gap-4 overflow-hidden;
+	@apply bg-clr-primary;
+}
+
+.tabsContainer * {
+	@apply min-w-0 !important;
+}
+
+.tabsContainer button {
+	@apply text-clr-secondary !important;
+}
+
+.tabsContainer .tabsIndicator {
+	@apply bg-clr-accent;
+}
+
+.editorContainer {
+	@apply flex flex-col gap-4;
+}

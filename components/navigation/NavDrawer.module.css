@@ -1,0 +1,21 @@
+.container {
+	@apply flex flex-col;
+	@apply max-w-screen-sm w-[80%];
+	@apply bg-clr-primary bg-opacity-95;
+}
+
+.content {
+	@apply grow flex flex-col;
+}
+
+.content .head .userContainer {
+	@apply flex flex-col gap-2;
+}
+
+.footer {
+	@apply mt-auto;
+}
+
+.footer .extraInfo {
+	@apply text-center;
+}

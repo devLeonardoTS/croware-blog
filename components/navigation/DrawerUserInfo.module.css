@@ -1,0 +1,11 @@
+.container .content {
+	@apply flex flex-col gap-4 mb-4;
+}
+
+.info {
+	@apply flex justify-center;
+}
+
+.actions {
+	@apply flex justify-center gap-4;
+}

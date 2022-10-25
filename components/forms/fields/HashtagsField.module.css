@@ -1,0 +1,43 @@
+.container {
+	@apply flex flex-col w-full gap-1;
+}
+
+.container[data-error="true"] .hashtagList,
+.container[data-error="true"] .helperText {
+	@apply text-clr-error border-clr-error;
+}
+
+.listContainer {
+	@apply overflow-hidden;
+}
+
+.hashtagList {
+	@apply min-h-[39px];
+	@apply border border-clr-secondary rounded p-2 px-4;
+	@apply flex flex-wrap gap-2;
+}
+
+.hashtagList .hashtagContainer .hashtag {
+	@apply flex gap-2 items-center;
+	@apply py-0.5 px-1;
+	@apply border border-none rounded;
+	@apply bg-clr-secondary bg-opacity-80;
+}
+
+.hashtagList .hashtagContainer .hashtag .btnClose {
+	@apply p-0 m-0 w-4 h-4;
+	@apply bg-clr-primary bg-opacity-90 border rounded;
+	@apply hover:bg-clr-info;
+}
+
+.hashtagList .hashtagContainer .hashtag .text {
+	@apply pl-1;
+}
+
+.hashtagList .hashtagContainer .hashtag .text * {
+	@apply text-clr-primary font-bold;
+}
+
+.listContainer .helperText {
+	@apply px-4;
+}

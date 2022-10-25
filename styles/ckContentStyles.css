@@ -426,6 +426,10 @@
 }
 
 /* CUSTOM */
+.ck-content * {
+	color: inherit;
+}
+
 .ck-content a {
 	@apply underline;
 	@apply hover:text-clr-accent;
@@ -433,4 +437,14 @@
 
 .ck-content .raw-html-embed iframe {
 	@apply aspect-video h-full w-full;
+}
+
+.ck-content ul,
+.ck-content ol,
+.ck-content menu {
+	all: revert;
+}
+
+.ck-content .table table {
+	border-style: hidden;
 }

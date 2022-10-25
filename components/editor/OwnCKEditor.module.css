@@ -1,0 +1,41 @@
+.container {
+	@apply w-full relative;
+}
+
+.container :global(.ck) {
+	@apply max-w-screen-md mx-auto !important;
+}
+
+.container :global(.ck u) {
+	@apply underline !important;
+}
+
+.container :global(.ck .ck-toolbar) {
+	@apply border border-none rounded-t !important;
+}
+
+.container :global(.ck .ck-content) {
+	@apply border border-none rounded-b !important;
+}
+
+.container :global(.ck .ck-editor__main > div) {
+	@apply text-clr-secondary;
+	@apply bg-clr-primary;
+}
+
+.container :global(.ck-source-editing-area *) {
+	@apply text-clr-secondary;
+	@apply bg-clr-primary !important;
+}
+
+.container :global(.ck-toolbar) {
+	@apply relative !important;
+}
+
+.container :global(.ck .ck-dropdown__panel) {
+	@apply border border-white border-solid;
+}
+
+.container :global(.ck-restricted-editing_mode_standard) {
+	@apply min-h-[250px] !important;
+}

@@ -1,0 +1,11 @@
+.dialogMenuPaper {
+	@apply bg-clr-primary bg-opacity-95;
+}
+
+.dialogMenuPaper li {
+	@apply flex gap-2;
+}
+
+.dialogMenuPaper hr {
+	@apply border-clr-secondary border-opacity-50;
+}

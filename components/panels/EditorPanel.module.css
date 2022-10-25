@@ -1,0 +1,7 @@
+.content {
+	@apply flex flex-col gap-4;
+}
+
+.content .head {
+	@apply px-4;
+}

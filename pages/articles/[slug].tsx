@@ -1,48 +1,72 @@
 import dayjs from "dayjs";
-import type { GetServerSideProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
+import { stringify } from "qs";
 import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
-import { IMG_ARTICLE_PLACEHOLDER } from "../../helpers/constants/assetUrls";
+import { ArticleData } from "..";
+import NotFound from "../../components/NotFound";
+
+import Assets from "../../helpers/constants/Assets";
+import Endpoints from "../../helpers/constants/Endpoints";
 import { API_ARTICLES } from "../../helpers/constants/mainApiEndpoints";
+import { PageHrefs } from "../../helpers/constants/PageHrefs";
 import ownDOMPurify from "../../helpers/ownDOMPurify";
+import { ServerAxios } from "../../helpers/utilities/ServerAxios";
+import useNavigationStorage from "../../stores/NavigationStorage";
+import useUserSession from "../../stores/UserSessionStore";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
 type ArticlePageProps = {
-	article: any;
+	article: ArticleData;
 };
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getServerSideProps: GetServerSideProps<
+	ArticlePageProps
+> = async context => {
 	const slug = context.params?.slug;
-	const url = `${API_ARTICLES}?filters[slug]=${slug}&populate=*`;
 
-	try {
-		const res = await fetch(url);
-		const jsonData = await res.json();
-		const data = jsonData.data;
-
-		if (!jsonData || !data || data.length < 1) {
-			return { notFound: true };
+	const query = stringify(
+		{
+			populate: "*",
+			filters: {
+				slug: {
+					$eqi: slug,
+				},
+			},
+			publicationState: "preview",
+			pagination: {
+				start: 0,
+				limit: -1,
+			},
+		},
+		{
+			encodeValuesOnly: true,
 		}
+	);
 
-		return {
-			props: { article: jsonData },
-		};
-	} catch {
-		return {
-			notFound: true,
-		};
+	const url = `${Endpoints.articles}?${query}`;
+
+	const result = await ServerAxios.client
+		.get<{ data: Array<ArticleData> }>(url)
+		.then(response => response.data?.data?.[0])
+		.catch(error => {});
+
+	// console.log("[ArticlePage:getSSProps] - Result...", result);
+
+	if (!result) {
+		return { notFound: true };
 	}
+
+	return {
+		props: { article: result },
+	};
 };
 
 const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
-	const artData = article?.data?.[0];
-	const artMeta = article?.meta;
-
-	const dftAttributes = {
-		dataError: true,
-	};
+	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
+	const authorData = useUserSession(s => s.author);
 
 	const {
 		title,
@@ -54,8 +78,7 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 		author,
 		publishedAt,
 		updatedAt,
-		dataError,
-	} = artData?.attributes || dftAttributes; // "safe" destructuring - All destructures will be undefined if not available.
+	} = article?.attributes || {}; // "safe" destructuring - All destructures will be undefined if article not available.
 
 	// console.log("Article Data: ", article?.data);
 
@@ -82,6 +105,8 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 
 	const [articleBody, setArticleBody] = useState("");
 
+	const [isViewAllowed, setViewAllowed] = useState(true);
+
 	useEffect(() => {
 		if (publishedAt) {
 			const formattedDate = dayjs(publishedAt).format("DD/MM/YYYY HH:mm");
@@ -95,10 +120,32 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 		}
 	}, [content]);
 
-	if (dataError) {
+	useEffect(() => {
+		setCurrentNavLink("artigos", { title: title });
+	}, [setCurrentNavLink, title]);
+
+	useEffect(() => {
+		const isViewerOwner = authorData?.id === author?.data.id;
+		const isUnpublished = publishedAt === null;
+		if (isUnpublished && !isViewerOwner) {
+			setViewAllowed(false);
+		}
+	}, [author?.data.id, authorData?.id, publishedAt]);
+
+	if (!isViewAllowed) {
+		return <NotFound />;
+	}
+
+	if (!article?.attributes) {
 		return (
-			<main className={`${dftStyles.container} items-center justify-center`}>
-				<h1>Loading...</h1>
+			<main
+				className={`${dftStyles.container} items-center justify-center`}
+			>
+				<h1>
+					{
+						"Não foi possível encontrar os dados do artigo, tente novamente mais tarde."
+					}
+				</h1>
 			</main>
 		);
 	}
@@ -119,10 +166,19 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						<div className={dftStyles.footer}>
 							<div className={dftStyles.metaInfo}>
 								<div className={dftStyles.author}>
-									<div className={dftStyles.icon}>
-										<FaFeatherAlt title="Autor(a)" />
-									</div>
-									<p>{author?.data?.attributes?.name || "Unknown"}</p>
+									<a
+										className={dftStyles.link}
+										href={
+											`${PageHrefs.authors}/${author?.data.attributes.slug}` ||
+											PageHrefs.home
+										}
+									>
+										<span className={dftStyles.icon}>
+											<FaFeatherAlt title="Autor(a)" />
+										</span>
+										{author?.data.attributes.name ||
+											"Unknown"}
+									</a>
 								</div>
 								<div className={dftStyles.time}>
 									<div className={dftStyles.icon}>
@@ -138,7 +194,10 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 						<div className={dftStyles.head}>
 							<div className={dftStyles.imageArea}>
 								<Image
-									src={picture?.data?.attributes.url || IMG_ARTICLE_PLACEHOLDER}
+									src={
+										picture?.data?.attributes.url ||
+										Assets.placeholder.article.thumbnail
+									}
 									layout="fill"
 									className={dftStyles.image}
 									alt="An image representing the article context."

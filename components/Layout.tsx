@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 import dftStyles from "./Layout.module.css";
 
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Script from "next/script";
+import NavBar from "./navigation/NavBar";
 
 type LayoutProps = {
 	children: ReactNode;
@@ -12,7 +12,7 @@ type LayoutProps = {
 export function Layout({ children }: LayoutProps) {
 	return (
 		<div className={dftStyles.container}>
-			<Navbar />
+			<NavBar />
 			{children}
 			<Footer />
 
