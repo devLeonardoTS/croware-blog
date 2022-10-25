@@ -18,6 +18,7 @@ type ImageFieldProps = {
 	name: string;
 	legend?: string;
 	file?: File;
+	imgUrl?: string;
 	controlStyles?: string;
 	figureProps?: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
 	imageProps?: DetailedHTMLProps<
@@ -34,27 +35,28 @@ const ImageField = ({
 	name,
 	legend,
 	file,
+	imgUrl,
 	controlStyles,
 	figureProps,
 	imageProps,
 	inputProps,
 }: ImageFieldProps) => {
 	const [inputId, setInputId] = useState(nanoid());
-	const [preview, setPreview] = useState<any>();
+	const [previewFile, setPreviewFile] = useState<any>();
 	const touchRippleRef = useRef<TouchRippleActions>(null);
 
 	useEffect(() => {
 		if (file && file instanceof File) {
-			setPreview(URL.createObjectURL(file));
+			setPreviewFile(URL.createObjectURL(file));
 			return;
 		}
 
 		if (file) {
-			setPreview(file);
+			setPreviewFile(file);
 			return;
 		}
 
-		setPreview(undefined);
+		setPreviewFile(undefined);
 	}, [file]);
 
 	return (
@@ -71,7 +73,11 @@ const ImageField = ({
 				<label htmlFor={inputId}>
 					<figure {...figureProps}>
 						<img
-							src={preview || Assets.placeholder.article.thumbnail}
+							src={
+								previewFile ||
+								imgUrl ||
+								Assets.placeholder.article.thumbnail
+							}
 							alt={imageProps?.alt || legend}
 							{...imageProps}
 						/>

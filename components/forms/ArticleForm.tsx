@@ -3,9 +3,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { stringify } from "qs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import slugify from "slugify";
 import { OwnAxios } from "../../helpers/utilities/OwnAxios";
+import { ArticleData } from "../../pages";
 
 import useArticleFormStorage, {
 	ArticleFormDataType,
@@ -125,9 +126,9 @@ const createArticleHandler = async ({
 					excerpt: values.excerpt,
 					body: values.content,
 				},
-				article_category: values.category,
+				article_category: values.categoryId,
 				article_hashtags: (values.hashtagsArr || []).map(i => i.name),
-				colaborators: values.colaborators,
+				colaborators: values.colaboratorIds,
 				publishedAt: null,
 			},
 		})
@@ -140,30 +141,20 @@ const createArticleHandler = async ({
 
 type ArticleUpdateArgs = {
 	authorId: number;
-	initial: any;
 	updated: ArticleFormDataType;
+	initial?: ArticleData;
 };
 
-const updateArticleHandler = async ({
+export const updateArticleHandler = async ({
 	authorId,
 	initial,
 	updated,
 }: ArticleUpdateArgs) => {
-	// console.log("[ArticleForm:updateArticleHandler] - Starting...", {
-	// 	authorId,
-	// 	initial,
-	// 	updated,
-	// });
-
-	if (!initial?.id) {
-		throw new Error(
-			`Não foi possível atualizar a publicação, o "id" não foi encontrado.`
-		);
-	}
-
-	if (authorId !== initial?.attributes?.author?.data?.id) {
-		throw new Error(`Você não tem permissão para atualizar esta publicação.`);
-	}
+	console.log("[ArticleForm:updateArticleHandler] - Starting...", {
+		authorId,
+		initial,
+		updated,
+	});
 
 	const handleSlug = (value: string) => {
 		return slugify(value, {
@@ -186,10 +177,31 @@ const updateArticleHandler = async ({
 		}
 	);
 
-	const endPoint = `/api/articles/${initial.id}?${query}`;
+	const endPoint = `/api/articles/${initial?.id || updated.id}?${query}`;
 	const result = await OwnAxios.client
 		.put<any>(endPoint, {
-			data: updated,
+			data: {
+				title: updated.title || undefined,
+				slug: updated.slug || undefined,
+				content:
+					updated.excerpt || updated.content
+						? {
+								excerpt: updated.excerpt || undefined,
+								body: updated.content || undefined,
+						  }
+						: undefined,
+				article_category: updated.categoryId || undefined,
+				article_hashtags: updated.hashtagsArr
+					? updated.hashtagsArr.map(i => i.name)
+					: undefined,
+				picture: updated.picture || undefined,
+				colaborators:
+					updated.colaboratorIds && updated.colaboratorIds?.length > 0
+						? updated.colaboratorIds
+						: undefined,
+				publishedAt:
+					updated.publishedAt === null ? null : updated.publishedAt,
+			},
 		})
 		.then(response => response.data);
 
@@ -306,7 +318,9 @@ const ArticleForm = (props: ArticleFormProps) => {
 	if (hasFormLoadFailed) {
 		return (
 			<div>
-				{"Não foi possível carregar o formulário, tente novamente mais tarde."}
+				{
+					"Não foi possível carregar o formulário, tente novamente mais tarde."
+				}
 			</div>
 		);
 	}
@@ -322,12 +336,16 @@ const ArticleForm = (props: ArticleFormProps) => {
 						<div className={dftStyles.row}>
 							<ImageField
 								name="thumbnail"
-								file={currentValues.thumbnail}
+								file={currentValues.thumbnailFile || undefined}
+								imgUrl={currentValues.thumbnailUrl || ""}
 								inputProps={{
 									onChange: ev => {
 										const file = ev.target.files?.[0];
 										if (file) {
-											setCurrentFieldValue("thumbnail", file);
+											setCurrentFieldValue(
+												"thumbnailFile",
+												file
+											);
 										}
 									},
 								}}
@@ -347,10 +365,14 @@ const ArticleForm = (props: ArticleFormProps) => {
 								}}
 								value={currentValues.title}
 								onChange={ev => {
-									setCurrentFieldValue("title", ev.target.value);
+									setCurrentFieldValue(
+										"title",
+										ev.target.value
+									);
 								}}
 								helperText={
-									Boolean(formErrors["title"]) && formErrors["title"][0]
+									Boolean(formErrors["title"]) &&
+									formErrors["title"][0]
 								}
 								error={Boolean(formErrors["title"])}
 							/>
@@ -367,10 +389,14 @@ const ArticleForm = (props: ArticleFormProps) => {
 								}}
 								value={currentValues.excerpt}
 								onChange={ev =>
-									setCurrentFieldValue("excerpt", ev.target.value)
+									setCurrentFieldValue(
+										"excerpt",
+										ev.target.value
+									)
 								}
 								helperText={
-									Boolean(formErrors["excerpt"]) && formErrors["excerpt"][0]
+									Boolean(formErrors["excerpt"]) &&
+									formErrors["excerpt"][0]
 								}
 								error={Boolean(formErrors["excerpt"])}
 							/>
@@ -389,36 +415,45 @@ const ArticleForm = (props: ArticleFormProps) => {
 									value: currentValues.hashtags,
 									onChange: ev => {
 										const value = ev.target.value;
-										const isLastKeyAComma = value?.at(-1) === ",";
+										const isLastKeyAComma =
+											value?.at(-1) === ",";
 										const isValid = !formErrors["hashtags"];
 										if (isLastKeyAComma && isValid) {
-											setCurrentFieldValue("hashtags", "");
+											setCurrentFieldValue(
+												"hashtags",
+												""
+											);
 
-											const hashtagsArr = currentValues.hashtagsArr;
+											const hashtagsArr =
+												currentValues.hashtagsArr;
 											if (!hashtagsArr) {
 												return;
 											}
 
-											const cleanValue = value.replaceAll(",", "").trim();
+											const cleanValue = value
+												.replaceAll(",", "")
+												.trim();
 
-											const isDuplicate = hashtagsArr.find(
-												i => i.name === cleanValue
-											);
+											const isDuplicate =
+												hashtagsArr.find(
+													i => i.name === cleanValue
+												);
 
 											if (isDuplicate) {
 												return;
 											}
 
 											if (cleanValue.length > 0) {
-												const newHashtag: HashtagType = {
-													id: nanoid(),
-													name: cleanValue,
-												};
+												const newHashtag: HashtagType =
+													{
+														id: nanoid(),
+														name: cleanValue,
+													};
 
-												setCurrentFieldValue("hashtagsArr", [
-													...hashtagsArr,
-													newHashtag,
-												]);
+												setCurrentFieldValue(
+													"hashtagsArr",
+													[...hashtagsArr, newHashtag]
+												);
 
 												return;
 											}
@@ -427,21 +462,27 @@ const ArticleForm = (props: ArticleFormProps) => {
 										setCurrentFieldValue("hashtags", value);
 									},
 								}}
-								hashtagList={currentValues.hashtagsArr}
+								hashtagList={currentValues.hashtagsArr || []}
 								removeHashtag={id => {
-									const hashtagsArr = currentValues.hashtagsArr;
+									const hashtagsArr =
+										currentValues.hashtagsArr;
 									if (!hashtagsArr) {
 										return;
 									}
-									const withoutSelectedTag = hashtagsArr.filter(
-										item => item.id !== id
-									);
+									const withoutSelectedTag =
+										hashtagsArr.filter(
+											item => item.id !== id
+										);
 
-									setCurrentFieldValue("hashtagsArr", withoutSelectedTag);
+									setCurrentFieldValue(
+										"hashtagsArr",
+										withoutSelectedTag
+									);
 								}}
 								helperText={getHashtagsHelperText()}
 								error={Boolean(
-									formErrors["hashtags"] || formErrors["hashtagsArr"]
+									formErrors["hashtags"] ||
+										formErrors["hashtagsArr"]
 								)}
 							/>
 						</div>
@@ -455,20 +496,27 @@ const ArticleForm = (props: ArticleFormProps) => {
 								selectProps={{
 									id: "new-pub-category",
 									name: "category",
-									value: currentValues.category,
+									value: currentValues.categoryId,
 									disabled: queryCategories.isLoading,
 									// onFocus: async ev => await fetchCategories(),
-									onChange: ev =>
-										setCurrentFieldValue("category", ev.target.value),
+									onChange: ev => {
+										setCurrentFieldValue(
+											"categoryId",
+											ev.target.value
+										);
+									},
 								}}
 								helperText={
-									Boolean(formErrors["category"]) && formErrors["category"][0]
+									Boolean(formErrors["categoryId"]) &&
+									formErrors["categoryId"][0]
 								}
-								error={Boolean(formErrors["category"])}
+								error={Boolean(formErrors["categoryId"])}
 							>
 								<MenuItem
 									key={nanoid()}
-									onClick={() => setCurrentFieldValue("category", "")}
+									onClick={() =>
+										setCurrentFieldValue("categoryId", "")
+									}
 								></MenuItem>
 								{queryCategories.data?.map(item => (
 									<MenuItem key={nanoid()} value={item.id}>
@@ -486,23 +534,31 @@ const ArticleForm = (props: ArticleFormProps) => {
 									id: "new-pub-colaborators",
 									name: "colaborators",
 									multiple: true,
-									value: currentValues.colaborators,
+									value: currentValues.colaboratorIds,
 									disabled: queryColaborators.isLoading,
 									maxRows: 4,
 									// onFocus: ev => fetchColaborators(),
 									onChange: ev => {
-										setCurrentFieldValue("colaborators", ev.target.value);
+										setCurrentFieldValue(
+											"colaboratorIds",
+											ev.target.value
+										);
 									},
 								}}
 								helperText={
-									Boolean(formErrors["colaborators"]) &&
-									formErrors["colaborators"][0]
+									Boolean(formErrors["colaboratorIds"]) &&
+									formErrors["colaboratorIds"][0]
 								}
-								error={Boolean(formErrors["colaborators"])}
+								error={Boolean(formErrors["colaboratorIds"])}
 							>
 								<MenuItem
 									key={nanoid()}
-									onClick={() => setCurrentFieldValue("colaborators", [])}
+									onClick={() =>
+										setCurrentFieldValue(
+											"colaboratorIds",
+											[]
+										)
+									}
 								></MenuItem>
 								{queryColaborators.data?.map(item => (
 									<MenuItem key={nanoid()} value={item.id}>
@@ -517,9 +573,13 @@ const ArticleForm = (props: ArticleFormProps) => {
 								<OwnCkEditor
 									name="editor"
 									onChange={(data: any) => {
-										setCurrentFieldValue("content", data, false);
+										setCurrentFieldValue(
+											"content",
+											data,
+											false
+										);
 									}}
-									value={currentValues.content}
+									value={currentValues.content || ""}
 								/>
 							</div>
 						</div>
@@ -533,6 +593,7 @@ const ArticleForm = (props: ArticleFormProps) => {
 								}
 
 								const errorsObj = await validateForm();
+								console.log("hasErrors?", errorsObj);
 								if (Object.keys(errorsObj).length > 0) {
 									return;
 								}
@@ -559,16 +620,18 @@ const ArticleForm = (props: ArticleFormProps) => {
 										return;
 									}
 
-									if (currentValues?.thumbnail) {
-										const uploadedImageData = await imageUploader
-											.mutateAsync({
-												file: currentValues.thumbnail,
-											})
-											.catch(() => {
-												// Do nothing...
-											});
+									if (currentValues?.thumbnailFile) {
+										const uploadedImageData =
+											await imageUploader
+												.mutateAsync({
+													file: currentValues.thumbnailFile,
+												})
+												.catch(() => {
+													// Do nothing...
+												});
 
-										const imageData = uploadedImageData?.[0];
+										const imageData =
+											uploadedImageData?.[0];
 
 										if (imageData) {
 											await articleUpdater
@@ -589,13 +652,52 @@ const ArticleForm = (props: ArticleFormProps) => {
 
 									if (window) {
 										alert(
-											`Artigo salvo com sucesso! Verifique os "artigos armazenados" para torna-la pública.`
+											`Artigo salvo com sucesso! Verifique os "artigos armazenados" para torná-la pública.`
 										);
+
+										window.location.reload();
+									}
+								}
+
+								if (formStatus === "updating") {
+									let imageData = undefined;
+
+									if (currentValues?.thumbnailFile) {
+										const uploadedImageData =
+											await imageUploader
+												.mutateAsync({
+													file: currentValues.thumbnailFile,
+												})
+												.catch(() => {
+													// Do nothing...
+												});
+
+										imageData = uploadedImageData?.[0];
+									}
+
+									await articleUpdater
+										.mutateAsync({
+											authorId: author?.id || -1,
+											updated: {
+												...currentValues,
+												picture: imageData,
+											},
+										})
+										.catch(error => {
+											// Do nothing again...
+										});
+
+									await clearForm();
+
+									if (window) {
+										alert(`Artigo atualizado com sucesso!`);
+
+										window.location.reload();
 									}
 								}
 							}}
 						>
-							Salvar
+							{formStatus === "creating" ? "Salvar" : "Atualizar"}
 						</OutlinedButton>
 						<OutlinedButton onClick={openArticlePreview}>
 							Visualizar
@@ -616,7 +718,7 @@ const ArticleForm = (props: ArticleFormProps) => {
 			<div className={dftStyles.modalContainer}>
 				<ArticlePreviewModal
 					isOpen={isArticlePreviewOpen}
-					articleContent={currentValues.content}
+					articleContent={currentValues.content || ""}
 					closeHandler={closeArticlePreview}
 				/>
 			</div>

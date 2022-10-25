@@ -4,7 +4,7 @@ import { OwnAxios } from "../helpers/utilities/OwnAxios";
 import * as yup from "yup";
 import * as qs from "qs";
 import { persist } from "zustand/middleware";
-import STORAGE_KEYS from "./StorageKeys";
+import STORAGE_KEYS, { STORAGE_VERSION } from "./StorageKeys";
 
 // Types.
 export type UserCredentials = {
@@ -104,11 +104,11 @@ const useUserSession = create<SessionContextType>()(
 				});
 			};
 
-			const signIn = async ({ identifier, password }: UserCredentials) => {
+			const signIn = async ({
+				identifier,
+				password,
+			}: UserCredentials) => {
 				const status = get().status;
-				if (status !== "unsigned") {
-					return;
-				}
 
 				set({ status: "loading" });
 
@@ -120,8 +120,8 @@ const useUserSession = create<SessionContextType>()(
 					.post<SignInResponse>(
 						endPoint,
 						{
-							identifier,
-							password,
+							identifier: String(identifier).trim(),
+							password: String(password).trim(),
 						},
 						{
 							signal: reqController.signal,
@@ -130,8 +130,21 @@ const useUserSession = create<SessionContextType>()(
 					.then(response => response.data)
 					.catch(error => {
 						reqController.abort();
+						const errorName = error?.response?.data?.error?.name;
+
+						if (errorName === "ValidationError") {
+							if (window) {
+								alert(
+									"A autenticação falhou, verifique suas credenciais."
+								);
+							}
+							return;
+						}
+
 						if (window) {
-							alert("A autenticação falhou, tente novamente mais tarde.");
+							alert(
+								"A autenticação falhou, tente novamente mais tarde."
+							);
 						}
 					});
 
@@ -150,7 +163,9 @@ const useUserSession = create<SessionContextType>()(
 						},
 						status: "authenticated",
 						token: String(data.jwt),
-						expiresAt: dayjs(Date.now()).add(24, "hours").toISOString(),
+						expiresAt: dayjs(Date.now())
+							.add(24, "hours")
+							.toISOString(),
 					});
 
 					OwnAxios.setAuthHeader(data.jwt);
@@ -182,7 +197,8 @@ const useUserSession = create<SessionContextType>()(
 					return;
 				}
 
-				const isExpired = expiresAt && dayjs().isAfter(dayjs(expiresAt));
+				const isExpired =
+					expiresAt && dayjs().isAfter(dayjs(expiresAt));
 
 				if (isAuthenticated && isExpired) {
 					alert("Sua sessão expirou, autentique-se novamente.");
@@ -210,6 +226,7 @@ const useUserSession = create<SessionContextType>()(
 		{
 			name: STORAGE_KEYS.USER_SESSION,
 			getStorage: () => localStorage,
+			version: STORAGE_VERSION,
 		}
 	)
 );

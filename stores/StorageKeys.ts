@@ -4,4 +4,6 @@ const STORAGE_KEYS = {
     NAVIGATION: "@croware-blog::navigation",
 }
 
+export const STORAGE_VERSION = 1;
+
 export default STORAGE_KEYS;

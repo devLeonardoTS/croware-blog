@@ -16,7 +16,7 @@ type ArticleListItem = {
 };
 
 const ArticleListItem = ({ article }: ArticleListItem) => {
-	const [publishedAt, setPublishedAt] = useState("00/00/0000 00:00");
+	const [publishedAt, setPublishedAt] = useState<string>();
 
 	const winBp = useBreakpoints();
 
@@ -121,7 +121,7 @@ const ArticleListItem = ({ article }: ArticleListItem) => {
 							<div className={dftStyles.icon}>
 								<BsClockFill title="Data de publicação" />
 							</div>
-							<p>{publishedAt}</p>
+							{publishedAt ? <p>{publishedAt}</p> : null}
 						</div>
 					</div>
 					{!winBp.isBase && !winBp.isSm && hashTagList()}

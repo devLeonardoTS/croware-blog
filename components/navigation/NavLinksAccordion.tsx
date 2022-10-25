@@ -42,28 +42,34 @@ const NavLinksAccordion = ({
 			</ListItemButton>
 			<Collapse in={isOpen} timeout="auto" unmountOnExit>
 				<Divider />
-				<List className={dftStyles.linksList} component="menu" disablePadding>
+				<List
+					className={dftStyles.linksList}
+					component="menu"
+					disablePadding
+				>
 					{(links || []).map(link => {
 						if (link.hidden) {
 							return;
 						}
 						return (
-							<ListItemButton
-								key={link.id}
-								component="li"
-								className={dftStyles.link}
-							>
-								<span
-									className={dftStyles.addorn}
-									{...(current?.name.toLowerCase() ===
-										link.name.toLowerCase() && {
-										"data-active": true,
-									})}
+							<li key={link.id}>
+								<ListItemButton
+									className={dftStyles.link}
+									component="a"
+									href={link.path}
 								>
-									&nbsp;
-								</span>
-								<a href={link.path}>{link.name}</a>
-							</ListItemButton>
+									<span
+										className={dftStyles.addorn}
+										{...(current?.name.toLowerCase() ===
+											link.name.toLowerCase() && {
+											"data-active": true,
+										})}
+									>
+										&nbsp;
+									</span>
+									{link.name}
+								</ListItemButton>
+							</li>
 						);
 					})}
 				</List>

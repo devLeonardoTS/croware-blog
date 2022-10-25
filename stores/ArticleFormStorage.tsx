@@ -3,21 +3,24 @@ import create from "zustand";
 import { persist } from "zustand/middleware";
 
 import HashtagType from "../components/forms/types/HashtagType";
-import STORAGE_KEYS from "./StorageKeys";
+import { ArticleData } from "../pages";
+import STORAGE_KEYS, { STORAGE_VERSION } from "./StorageKeys";
 
 export type ArticleFormDataType = {
 	[key: string]: any;
-	id?: string;
-	title?: string;
-	excerpt?: string;
-	category?: string;
-	author?: string;
-	hashtags?: string;
-	hashtagsArr?: HashtagType[];
-	colaborators?: string[];
-	content?: string;
-	thumbnail?: File;
-	publishedAt?: string;
+	id?: number | null;
+	authorId?: number | null;
+	title?: string | null;
+	excerpt?: string | null;
+	categoryId?: number | null;
+	hashtags?: string | null;
+	hashtagsArr?: HashtagType[] | null;
+	colaboratorIds?: number[] | null;
+	content?: string | null;
+	thumbnailFile?: File | null;
+	thumbnailId?: number | null;
+	thumbnailUrl?: string | null;
+	publishedAt?: string | null;
 };
 
 export type ArticleFormOnSubmitHandler = (
@@ -52,11 +55,11 @@ export type ArticleFormStorageType = {
 	resetForm: () => Promise<void> | void;
 	clearStorage: () => Promise<void> | void;
 
-	articleUpdateSetup: (values: ArticleFormDataType) => Promise<void> | void;
+	articleUpdateSetup: (article: ArticleData) => Promise<void> | void;
 	articleCreationSetup: () => Promise<void> | void;
 };
 
-const articleSchema = yup.object({
+const articleSchema = yup.object().shape({
 	title: yup
 		.string()
 		.required("Você esqueceu de nomear sua publicação")
@@ -66,7 +69,7 @@ const articleSchema = yup.object({
 		.required("O resumo é essencial para chamar a atenção do público")
 		.max(512, m => `O resumo não deve passar de ${m.max} caracteres`),
 	content: yup.string().optional().default(""),
-	category: yup.string().required("Selecione uma categoria"),
+	categoryId: yup.number().required("Selecione uma categoria"),
 	hashtags: yup
 		.string()
 		.trim()
@@ -77,7 +80,10 @@ const articleSchema = yup.object({
 			name: yup
 				.string()
 				.trim()
-				.max(5, m => `A hashtag "${m.value}" passa de ${m.max} caracteres`),
+				.max(
+					5,
+					m => `A hashtag "${m.value}" passa de ${m.max} caracteres`
+				),
 		})
 	),
 });
@@ -87,25 +93,31 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 		// @ts-ignore
 		(set, get) => {
 			const dftValues: ArticleFormDataType = {
-				id: "",
+				id: 0,
 				title: "",
 				excerpt: "",
-				category: "",
-				author: "",
+				categoryId: undefined,
+				authorId: 0,
 				hashtags: "",
 				hashtagsArr: [],
-				colaborators: [],
+				colaboratorIds: [],
 				content: "",
-				thumbnail: undefined,
+				thumbnailFile: undefined,
+				thumbnailId: 0,
+				thumbnailUrl: "",
+				publishedAt: undefined,
 			};
 
 			// Validators
 
 			const validate = async (values?: ArticleFormDataType) => {
 				try {
-					await articleSchema.validate(values || get().currentValues, {
-						abortEarly: false,
-					});
+					await articleSchema.validate(
+						values || get().currentValues,
+						{
+							abortEarly: false,
+						}
+					);
 					const cleanErrorList: FormErrorType = {};
 					set({ errors: cleanErrorList });
 					return cleanErrorList;
@@ -131,15 +143,18 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 
 			const validateField = async (fieldName: string) => {
 				try {
-					const isFieldValidatable = Object.keys(articleSchema.fields).includes(
-						fieldName
-					);
+					const isFieldValidatable = Object.keys(
+						articleSchema.fields
+					).includes(fieldName);
 
 					if (!isFieldValidatable) {
 						return;
 					}
 
-					await articleSchema.validateAt(fieldName, get().currentValues);
+					await articleSchema.validateAt(
+						fieldName,
+						get().currentValues
+					);
 
 					const errorList = { ...get().errors };
 					delete errorList[fieldName];
@@ -148,7 +163,10 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 				} catch (error) {
 					const validationError = error as yup.ValidationError;
 					set({
-						errors: { ...get().errors, [fieldName]: validationError.errors },
+						errors: {
+							...get().errors,
+							[fieldName]: validationError.errors,
+						},
 					});
 				}
 			};
@@ -197,10 +215,47 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 				await validate();
 			};
 
-			const articleUpdateSetup = (values: ArticleFormDataType) => {
+			const articleUpdateSetup = (article: ArticleData) => {
 				clearStorage();
-				setInitialValues(values);
-				setCurrentValues(values);
+
+				const articleToForm: ArticleFormDataType = {
+					id: article.id,
+					authorId:
+						article.attributes.author?.data.id ||
+						dftValues.authorId,
+					title: article.attributes.title,
+					excerpt:
+						article.attributes.content?.excerpt ||
+						dftValues.excerpt,
+					categoryId:
+						article.attributes.article_category?.data.id ||
+						dftValues.categoryId,
+					hashtags: dftValues.hashtags,
+					hashtagsArr:
+						article.attributes.article_hashtags?.data.map(i => {
+							const tag: HashtagType = {
+								id: String(i.id),
+								name: i.attributes.tag,
+							};
+							return tag;
+						}) || dftValues.hashtagsArr,
+					colaboratorIds:
+						article.attributes.colaborators?.data.map(i => i.id) ||
+						dftValues.colaboratorIds,
+					content:
+						article.attributes.content?.body || dftValues.content,
+					thumbnailFile: undefined,
+					thumbnailId:
+						article.attributes.picture?.data?.id ||
+						dftValues.thumbnailId,
+					thumbnailUrl:
+						article.attributes.picture?.data?.attributes.url ||
+						dftValues.thumbnailUrl,
+					publishedAt: article.attributes.publishedAt,
+				};
+
+				setInitialValues(articleToForm);
+				setCurrentValues(articleToForm);
 				set({
 					status: "updating",
 				});
@@ -237,16 +292,17 @@ const useArticleFormStorage = create<ArticleFormStorageType>()(
 				status: s.status,
 				initialValues: {
 					...s.initialValues,
-					thumbnail: undefined,
+					thumbnailFile: undefined,
 					publishedAt: undefined,
 				},
 				currentValues: {
 					...s.currentValues,
-					thumbnail: undefined,
+					thumbnailFile: undefined,
 					publishedAt: undefined,
 				},
 				errors: s.errors,
 			}),
+			version: STORAGE_VERSION,
 		}
 	)
 );

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaFeatherAlt } from "react-icons/fa";
 import { ArticleData } from "..";
+import NotFound from "../../components/NotFound";
 
 import Assets from "../../helpers/constants/Assets";
 import Endpoints from "../../helpers/constants/Endpoints";
@@ -14,6 +15,7 @@ import { PageHrefs } from "../../helpers/constants/PageHrefs";
 import ownDOMPurify from "../../helpers/ownDOMPurify";
 import { ServerAxios } from "../../helpers/utilities/ServerAxios";
 import useNavigationStorage from "../../stores/NavigationStorage";
+import useUserSession from "../../stores/UserSessionStore";
 import dftStyles from "../../styles/ArticlePage.module.css";
 
 type ArticlePageProps = {
@@ -32,6 +34,11 @@ export const getServerSideProps: GetServerSideProps<
 				slug: {
 					$eqi: slug,
 				},
+			},
+			publicationState: "preview",
+			pagination: {
+				start: 0,
+				limit: -1,
 			},
 		},
 		{
@@ -59,6 +66,7 @@ export const getServerSideProps: GetServerSideProps<
 
 const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
+	const authorData = useUserSession(s => s.author);
 
 	const {
 		title,
@@ -97,6 +105,8 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 
 	const [articleBody, setArticleBody] = useState("");
 
+	const [isViewAllowed, setViewAllowed] = useState(true);
+
 	useEffect(() => {
 		if (publishedAt) {
 			const formattedDate = dayjs(publishedAt).format("DD/MM/YYYY HH:mm");
@@ -111,9 +121,20 @@ const ArticlePage: NextPage<ArticlePageProps> = ({ article }) => {
 	}, [content]);
 
 	useEffect(() => {
-		console.log("Artigle title", title);
 		setCurrentNavLink("artigos", { title: title });
 	}, [setCurrentNavLink, title]);
+
+	useEffect(() => {
+		const isViewerOwner = authorData?.id === author?.data.id;
+		const isUnpublished = publishedAt === null;
+		if (isUnpublished && !isViewerOwner) {
+			setViewAllowed(false);
+		}
+	}, [author?.data.id, authorData?.id, publishedAt]);
+
+	if (!isViewAllowed) {
+		return <NotFound />;
+	}
 
 	if (!article?.attributes) {
 		return (

@@ -4,6 +4,7 @@ import { stringify } from "qs";
 import React, { ReactNode, useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 
+import { ArticleData } from "..";
 import AuthorMenuDialog, {
 	AuthorMenuDialogCloseHandler,
 } from "../../components/dialogs/AuthorMenuDialog";
@@ -175,6 +176,7 @@ export type AuthorData = {
 
 type AuthorProfilePageProps = {
 	author: AuthorData;
+	articles: Array<ArticleData>;
 };
 
 export const getServerSideProps: GetServerSideProps<
@@ -182,7 +184,7 @@ export const getServerSideProps: GetServerSideProps<
 > = async context => {
 	const slug = context.params?.slug;
 
-	const query = stringify(
+	const authorQuery = stringify(
 		{
 			populate: ["picture", "banner"],
 			filters: {
@@ -196,33 +198,72 @@ export const getServerSideProps: GetServerSideProps<
 		}
 	);
 
-	const url = `${Endpoints.authors}?${query}`;
+	const authorUrl = `${Endpoints.authors}?${authorQuery}`;
 
-	const result = await ServerAxios.client
-		.get<{ data: Array<AuthorData> }>(url)
+	const author = await ServerAxios.client
+		.get<{ data: Array<AuthorData> }>(authorUrl)
 		.then(response => response.data?.data?.[0])
 		.catch(error => {});
 
-	// console.log("[authors:getSSProps] - Result...", result);
-
-	if (!result) {
+	if (!author) {
 		return { notFound: true };
 	}
 
+	const articlesQuery = stringify(
+		{
+			populate: "*",
+			filters: {
+				author: {
+					id: {
+						$eqi: author.id,
+					},
+				},
+			},
+			publicationState: "preview",
+			pagination: {
+				start: 0,
+				limit: -1,
+			},
+		},
+		{
+			encodeValuesOnly: true,
+		}
+	);
+
+	const articlesUrl = `${Endpoints.articles}?${articlesQuery}`;
+
+	const articles = await ServerAxios.client
+		.get<{ data: Array<ArticleData> }>(articlesUrl)
+		.then(response => response.data?.data)
+		.catch(error => {
+			return [];
+		});
+
+	// console.log("[Authors:Profile:getSSProps] - Results...", {
+	// 	author, articles
+	// });
+
 	return {
-		props: { author: result },
+		props: {
+			author,
+			articles,
+		},
 	};
 };
 
 const ColabsList = () => {
 	return (
 		<div className="p-4">
-			<p>{"Colaborações do autor."}</p>
+			<p>
+				{
+					"Em breve será possível ver a lista de publicações colaborativas do autor..."
+				}
+			</p>
 		</div>
 	);
 };
 
-const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
+const Profile: NextPage<AuthorProfilePageProps> = ({ author, articles }) => {
 	// console.log("[authors:ProfilePage] - Author...", author);
 
 	const setCurrentNavLink = useNavigationStorage(s => s.setCurrentNavLink);
@@ -252,11 +293,21 @@ const Profile: NextPage<AuthorProfilePageProps> = ({ author }) => {
 	const panelSelector = (tab: boolean | number) => {
 		switch (tab) {
 			case 0:
-				return <ArticleListPanel />;
+				return (
+					<ArticleListPanel
+						articles={articles}
+						changeToEditor={() => setCustomPanel(<EditorPanel />)}
+					/>
+				);
 			case 1:
 				return ColabsList();
 			case 2:
-				return <ArticleStashPanel />;
+				return (
+					<ArticleStashPanel
+						articles={articles}
+						changeToEditor={() => setCustomPanel(<EditorPanel />)}
+					/>
+				);
 			default:
 				return null;
 		}

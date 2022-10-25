@@ -145,6 +145,10 @@ export const getServerSideProps: GetServerSideProps<
 					$eqi: slug,
 				},
 			},
+			pagination: {
+				start: 0,
+				limit: -1,
+			},
 			sort: ["publishedAt:desc"],
 		},
 		{

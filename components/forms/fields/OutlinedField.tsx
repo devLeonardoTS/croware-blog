@@ -23,6 +23,7 @@ const OutlinedField = (props: TextFieldProps) => {
 				},
 			}}
 			InputProps={{
+				autoComplete: "off",
 				classes: {
 					input: dftStyles.input,
 					notchedOutline: dftStyles.inputOutlined,

@@ -2,7 +2,7 @@ import lodash from "lodash";
 import { nanoid } from "nanoid";
 import create from "zustand";
 import { persist } from "zustand/middleware";
-import STORAGE_KEYS from "./StorageKeys";
+import STORAGE_KEYS, { STORAGE_VERSION } from "./StorageKeys";
 
 // Types
 
@@ -178,6 +178,7 @@ const useNavigationStorage = create<MainNavigationType>()(
 					)
 				);
 			},
+			version: STORAGE_VERSION,
 		}
 	)
 );
