@@ -73,7 +73,7 @@ const articleSchema = yup.object().shape({
 	hashtags: yup
 		.string()
 		.trim()
-		.max(5, m => `Sua hashtag passa de ${m.max} caracteres`),
+		.max(25, m => `Sua hashtag passa de ${m.max} caracteres`),
 	hashtagsArr: yup.array().of(
 		yup.object().shape({
 			id: yup.string(),
@@ -81,7 +81,7 @@ const articleSchema = yup.object().shape({
 				.string()
 				.trim()
 				.max(
-					5,
+					25,
 					m => `A hashtag "${m.value}" passa de ${m.max} caracteres`
 				),
 		})
