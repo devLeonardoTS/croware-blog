@@ -20,7 +20,7 @@ class CustomUploadAdapter {
 			file =>
 				new Promise(async (resolve, reject) => {
 					{
-						const uploadUrl = `${process.env.NEXT_PUBLIC_MAIN_API_BASE_URL}api/upload/`;
+						const uploadUrl = `${process.env.NEXT_PUBLIC_MAIN_API_BASE_URL}/api/upload/`;
 
 						const response = await this._initUploadRequest(
 							uploadUrl,
@@ -35,8 +35,11 @@ class CustomUploadAdapter {
 							reject(noImgUrlErrorText);
 						}
 
+						// console.log("uploadUrl?", uploadUrl);
+						// console.log("Response?", response);
+
 						resolve({
-							default: response.url,
+							default: response?.url,
 						});
 					}
 				})
@@ -163,9 +166,10 @@ function OwnCKEditor({ onChange, name, value, styles }: OwnCkEditorProps) {
 						return;
 					}
 
-					editor.plugins.get("FileRepository").createUploadAdapter = loader => {
-						return new CustomUploadAdapter(loader);
-					};
+					editor.plugins.get("FileRepository").createUploadAdapter =
+						loader => {
+							return new CustomUploadAdapter(loader);
+						};
 					// console.log("[Editor]: Ready to roll!", editor);
 				}}
 				onChange={(event, editor) => {
