@@ -20,7 +20,7 @@ class CustomUploadAdapter {
 			file =>
 				new Promise(async (resolve, reject) => {
 					{
-						const uploadUrl = `${process.env.NEXT_PUBLIC_MAIN_API_BASE_URL}/api/upload/`;
+						const uploadUrl = `${process.env.NEXT_PUBLIC_MAIN_API_BASEURL}/api/upload/`;
 
 						const response = await this._initUploadRequest(
 							uploadUrl,
