@@ -3,6 +3,7 @@ import React from "react";
 import { Editor as CustomEditor } from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor as MyCKEditor } from "@ckeditor/ckeditor5-react";
 import dftStyles from "./OwnCKEditor.module.css";
+import { OwnAxios } from "../../helpers/utilities/OwnAxios";
 
 class CustomUploadAdapter {
 	private requestController;
@@ -25,7 +26,7 @@ class CustomUploadAdapter {
 						const response = await this._initUploadRequest(
 							uploadUrl,
 							file
-						).catch(err => reject(err.message));
+						).catch(error => reject(error.message));
 
 						const uploadedItemUrl = response?.[0]?.url;
 
@@ -57,26 +58,23 @@ class CustomUploadAdapter {
 		this.requestController = new AbortController();
 		const { signal } = this.requestController;
 
-		return await fetch(uploadUrl, {
-			method: "POST",
-			body: formData,
-			signal: signal,
-		})
-			.then(res => this._handleUploadResponse(res))
-			.catch(err => this._handleUploadError(err, file));
+		return await OwnAxios.client
+			.post(uploadUrl, formData, { signal })
+			.then(result => this._handleUploadResponse(result.data))
+			.catch(error => this._handleUploadError(error, file));
 	}
 
 	_handleUploadResponse(response) {
-		return response.json();
+		return response;
 	}
 
-	_handleUploadError(err, file) {
+	_handleUploadError(error, file) {
 		const genericErrorText = `Couldn't upload file: ${file.name}.`;
 		let specificErrorText = "";
 
 		console.log(error);
 
-		if (err.name == "AbortError") {
+		if (error.name == "AbortError") {
 			specificErrorText = `Uploaded aborted for ${file.name}.`;
 		}
 
